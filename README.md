@@ -30,7 +30,9 @@
 مکانیزم‌های پاداش پیشرفته برای تجربه‌های شخصی‌سازی‌شده بیشتر.
 
 یکپارچگی با دستگاه‌های هوشمند برای ردیابی فعالیت‌های واقعی شما به‌عنوان بخشی از ماجراجویی.
+.
 #----------------------------------------------------------------------------------
+.
 #🚀 Shadow Planner - Your Ultimate Productivity RPG Adventure
 Welcome to Shadow Planner RPG, the ultimate gamified productivity app that turns your daily tasks and goals into an exciting, immersive role-playing game experience. Designed for anyone looking to level up their productivity, this app combines RPG mechanics with real-world goals, giving you the tools to conquer your daily challenges while collecting rewards, leveling up, and unlocking new abilities.
 
