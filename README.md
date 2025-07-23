@@ -5,7 +5,7 @@
 
 *Turn your daily tasks into an epic RPG adventure!*
 
-[📱 Download](#download) • [✨ Features](#features) • [🚀 Getting Started](#getting-started) • [🤝 Contributing](#contributing)
+[📱 Download](https://github.com/Parsa-Nasiri/shadow-planner/releases) • [✨ Features](#features) • [🚀 Getting Started](#getting-started) • [🤝 Contributing](#contributing)
 
 </div>
 
