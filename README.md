@@ -77,7 +77,7 @@ npm start
   
 | Main Dashboard | Quest screen | Skills | To do | Inventory | Store |
 |:---:|:---:|:---:|
-| ![Main Dashboard](screenshots/main_dashboard.png) | ![Quest screen](screenshots/quest.png) | ![Skills](screenshots/skills.png) | ![To do](screenshots/to_do.png) | ![Inventory](screenshots/inventory.png) | ![Store](screenshots/store.png) |
+| ![Main Dashboard](Screenshots/main_dashboard.png) | ![Quest screen](Screenshots/quest.png) | ![Skills](Screenshots/skills.png) | ![To do](Screenshots/to_do.png) | ![Inventory](Screenshots/inventory.png) | ![Store](Screenshots/store.png)
 
 </div>
 
