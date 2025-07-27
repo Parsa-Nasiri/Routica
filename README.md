@@ -75,9 +75,9 @@ npm start
 
 <div align="center">
   
-| Main Dashboard | Character Stats | Skill Tree |
+| Main Dashboard | Quest screen | Skills | To do | Inventory | Store |
 |:---:|:---:|:---:|
-| ![Dashboard](screenshots/dashboard.png) | ![Stats](screenshots/stats.png) | ![Skills](screenshots/skills.png) |
+| ![Main Dashboard](screenshots/main_dashboard.png) | ![Quest screen](screenshots/quest.png) | ![Skills](screenshots/skills.png) | ![To do](screenshots/to_do.png) | ![Inventory](screenshots/inventory.png) | ![Store](screenshots/store.png) |
 
 </div>
 
