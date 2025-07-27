@@ -71,15 +71,8 @@ npm start
 2. **Set Your Goals**: Add daily tasks and long-term objectives
 3. **Start Your Adventure**: Complete quests and watch your character grow!
 
-## 📸 Screenshots is not sat yet
+## 📸 App's pictures is in the "Screenshots" folder
 
-<div align="center">
-  
-| Main Dashboard | Quest screen | Skills | To do | Inventory | Store |
-|:---:|:---:|:---:|
-| ![Main Dashboard](Screenshots/main_dashboard.png) | ![Quest screen](Screenshots/quest.png) | ![Skills](Screenshots/skills.png) | ![To do](Screenshots/to_do.png) | ![Inventory](Screenshots/inventory.png) | ![Store](Screenshots/store.png)
-
-</div>
 
 ## 🎮 Game Mechanics
 
