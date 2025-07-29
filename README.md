@@ -1,11 +1,11 @@
 ## This text is not completed yet
 # 🎮 Shadow Planner RPG
-### Your Ultimate Productivity RPG Adventure
+### Your Ultimate Productivity RPG Adventure -- https://github.com/Parsa-Nasiri/shadow-planner?tab=readme-ov-file#-%D9%86%D8%B3%D8%AE%D9%87-%D9%81%D8%A7%D8%B1%D8%B3%DB%8C
 
 
 *Turn your daily tasks into an epic RPG adventure!*
 
-[📱 Download](https://github.com/Parsa-Nasiri/shadow-planner/releases) • [✨ Features](#features) • [🚀 Getting Started](#getting-started) • [🤝 Contributing](#contributing)
+[📱 Download](https://github.com/Parsa-Nasiri/shadow-planner/releases) • [✨ Features](#features) • [🚀 Getting Started](#getting-started) • [Persian](#-%D9%86%D8%B3%D8%AE%D9%87-%D9%81%D8%A7%D8%B1%D8%B3%DB%8C)
 
 </div>
 
