@@ -1,501 +1,518 @@
+<div align="center">
 
+# 🎯 Routica
 
-# 🎮 Routica - Gamified Habit Tracking App
+### *Build better habits, one day at a time.*
+
+![Status](https://img.shields.io/badge/status-active-success.svg)
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red.svg)
+
+**A powerful yet intuitive habit tracking app that transforms your daily routines into lasting success**
+
+[Features](#-features) • [Use Cases](#-use-cases) • [How It Works](#-how-it-works) • [Get Started](#-start-your-journey)
+
+---
+
+</div>
+
+## 🌟 Why Routica?
+
+<table>
+<tr>
+<td width="33%" align="center">
+<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Chart%20Increasing.png" width="60" />
+<h3>Smart & Flexible</h3>
+Not all habits are equal. Adapt to your lifestyle with daily, weekly, monthly, or custom intervals.
+</td>
+<td width="33%" align="center">
+<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rainbow.png" width="60" />
+<h3>Beautiful & Personal</h3>
+Choose from vibrant colors and icons. Make your tracker as motivating as your goals.
+</td>
+<td width="33%" align="center">
+<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="60" />
+<h3>Insightful</h3>
+Track progress, build streaks, understand patterns. Add notes to remember your journey.
+</td>
+</tr>
+</table>
+
+---
+
+## ✨ Features
+
+### 📅 **Flexible Frequency Options**
+
+| Frequency Type | Description | Example |
+|:--------------|:-----------|:--------|
+| 🌞 **Daily** | Every single day | Meditation, Water intake |
+| 📆 **Weekly** | X times per week | Gym 3x/week |
+| 🗓️ **Monthly** | X times per month | Read 4 books/month |
+| 🔄 **Custom** | Every X days | Journaling every 3 days |
+| 📍 **Specific Days** | Choose exact weekdays | Mon/Wed/Fri workouts |
+
+### ⏰ **Smart Reminders**
+
+> 🔔 Never forget your habits with intelligent notifications
+
+- ✅ Multiple reminder times per habit
+- ✅ Daily, weekdays, weekends, or one-time patterns
+- ✅ Perfect timing for morning, afternoon, and evening routines
+
+### 📊 **Complete Tracking System**
+
+```
+✓ Done    → Mark completed habits
+⊘ Skip    → Conscious breaks
+✗ Miss    → Honest tracking
+📈 History → Complete progress view
+```
+
+### 📝 **Daily Notes & Reflections**
+
+- 💭 Add context to your journey (up to 500 characters)
+- 🎉 Celebrate your wins
+- 🤔 Understand what works
+- 💡 Learn from your patterns
+
+### 🎨 **Visual Customization**
 
 <div align="center">
 
-*Transform your daily tasks and learning into an immersive RPG adventure!*
-
-[📱 Download](https://github.com/your-username/routica/releases) • [✨ Features](#features) • [🚀 Getting Started](#getting-started) • [📖 Documentation](#documentation)
+🎨 **Icons** | 🌈 **Colors** | ✨ **Themes**
+:---:|:---:|:---:
+Wide range | Hex codes | Personalized
 
 </div>
 
 ---
 
-## 🌟 About Routica
+## 💡 Use Cases
 
-Welcome to **Routica**, the revolutionary habit-tracking application that transforms your daily tasks and learning into an immersive RPG experience. Unlike traditional habit trackers, Routica combines AI-powered personalization, spaced repetition learning, multiplayer social features, and dark fantasy aesthetics to create an addictive, retention-focused experience.
+<details>
+<summary>🏃‍♂️ <b>Health & Fitness</b></summary>
 
-Build habits by completing daily quests, earning XP, leveling up your character, and battling increasingly difficult bosses that represent your bad habits. The app uses psychological principles (gamification, social accountability, spaced repetition) to ensure long-term engagement.
+- Daily workouts
+- Water intake tracking
+- Vitamins & supplements
+- Stretching routines
+- Sleep schedule
+- Meal planning
+
+</details>
+
+<details>
+<summary>🚀 <b>Productivity</b></summary>
+
+- Daily writing
+- Inbox zero
+- Focused work sessions
+- Learning time
+- Project milestones
+- Code commits
+
+</details>
+
+<details>
+<summary>🧘 <b>Mindfulness</b></summary>
+
+- Meditation practice
+- Gratitude journaling
+- Breathing exercises
+- Digital detox
+- Mindful eating
+- Nature walks
+
+</details>
+
+<details>
+<summary>📚 <b>Personal Growth</b></summary>
+
+- Reading daily
+- Language learning
+- Musical practice
+- Skill development
+- Online courses
+- Creative projects
+
+</details>
+
+<details>
+<summary>💆 <b>Self-Care</b></summary>
+
+- Skincare routine
+- Phone-free time
+- Social connections
+- Hobbies & fun
+- Rest days
+- Me-time activities
+
+</details>
+
+<details>
+<summary>🏠 <b>Home & Life</b></summary>
+
+- Cleaning schedule
+- Meal prep
+- Plant care
+- Budgeting
+- Decluttering
+- Home maintenance
+
+</details>
 
 ---
 
-## 🎯 Core Features
-
-### 🆙 Gamified Habit Tracking
-- **Dynamic Quest System**: Transform your habits into RPG quests with XP rewards
-- **Character Progression**: Level up, increase stats (HP, MP, Strength, Intelligence)
-- **Boss Battles**: Fight epic bosses representing your bad habits
-- **Achievement System**: Unlock badges, titles, and rewards for milestones
-
-### 🧠 Smart Learning System
-- **Spaced Repetition**: Master new skills with scientifically-backed review scheduling
-- **AI-Powered Dungeon Master**: Get personalized quest suggestions and insights
-- **Learning Quests**: Create and track educational goals with memory retention metrics
-
-### 👥 Social Features
-- **Guilds**: Join forces with friends to tackle collective challenges
-- **Leaderboards**: Compete globally or with friends
-- **Co-op Quests**: Team up for shared goals and accountability
-- **Friend Challenges**: 1v1 habit competitions
-
-### 🎨 Customization & Personalization
-- **Character Creation**: Design your unique avatar
-- **Dark Fantasy Aesthetics**: Immersive visual experience
-- **Personalized Quests**: AI tailors challenges to your goals
-- **Theme Options**: Dark mode, light mode, and custom themes (Pro)
-
-### 📊 Analytics & Insights
-- **Detailed Statistics**: Track your progress with beautiful charts
-- **Habit Patterns**: Discover your most productive times and days
-- **Streak Tracking**: Visualize your consistency
-- **Performance Insights**: AI-powered recommendations for improvement
-
----
-
-## 🏗️ Technical Architecture
-
-### Backend Infrastructure
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth (Google OAuth, Email/Password)
-- **Real-time**: Supabase Realtime for multiplayer features
-- **Storage**: Supabase Storage for user avatars and assets
-- **AI Integration**: Webhook endpoint for n8n automation and AI dungeon master
-- **API**: RESTful API via Supabase Edge Functions
-
-### Frontend Stack
-- **Framework**: React Native / Flutter (cross-platform)
-- **State Management**: Redux / Zustand
-- **UI Library**: Custom components with Tailwind-inspired styling
-- **Animations**: Framer Motion / Lottie
-- **Charts**: Recharts for analytics
-
----
-
-## 📱 App Screenshots
-
-*(Add screenshots of your app here)*
+## 🎯 How It Works
 
 <div align="center">
-  <img src="screenshots/home_screen.png" width="200" alt="Home Screen">
-  <img src="screenshots/quest_screen.png" width="200" alt="Quest Screen">
-  <img src="screenshots/boss_battle.png" width="200" alt="Boss Battle">
-  <img src="screenshots/social_features.png" width="200" alt="Social Features">
+
+```mermaid
+graph LR
+    A[🎨 Create Habit] --> B[⚙️ Set Frequency]
+    B --> C[⏰ Add Reminders]
+    C --> D[📊 Track Daily]
+    D --> E[📝 Add Notes]
+    E --> F[🏆 Build Consistency]
+    F --> G[✨ Achieve Goals]
+```
+
+</div>
+
+### Step-by-Step Guide
+
+| Step | Action | Description |
+|:----:|:-------|:-----------|
+| **1** | 🎨 **Create** | Name your habit, pick an icon and color |
+| **2** | ⚙️ **Configure** | Set how often (daily, weekly, custom) |
+| **3** | ⏰ **Remind** | Add notification times |
+| **4** | 📊 **Track** | Mark done, skip, or miss daily |
+| **5** | 📝 **Reflect** | Add notes about your experience |
+| **6** | 🏆 **Succeed** | Build consistency over time |
+
+---
+
+## 🚀 Start Your Journey
+
+> 💪 Building habits isn't about perfection—it's about progress.
+
+<div align="center">
+
+### **Routica helps you show up consistently, understand your patterns, and celebrate your wins along the way.**
+
+🌱 Every journey begins with a single step. Make it count with Routica.
+
+---
+
+### ⭐ **Star this repo if you believe in building better habits!**
+
 </div>
 
 ---
 
-## 🚀 Getting Started
+## 📸 Screenshots
 
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/routica.git
-
-# Navigate to project directory
-cd routica
-
-# Install dependencies
-npm install
-
-# Start the application
-npm start
-```
-
-### Quick Setup
-
-1. **Create Your Account**: Sign up with email or Google OAuth
-2. **Design Your Character**: Choose your avatar and starting stats
-3. **Set Your Goals**: Add daily tasks and long-term objectives
-4. **Begin Your Adventure**: Complete quests and watch your character grow!
+*Coming soon...*
 
 ---
 
-## 📖 Documentation
+## 🛠️ Tech Stack
 
-- [User Guide](docs/user-guide.md)
-- [Developer Documentation](docs/developer-docs.md)
-- [API Reference](docs/api-reference.md)
-- [Contributing Guidelines](docs/contributing.md)
-
----
-
-## 🎮 Game Mechanics
-
-### Character Progression
-- **💪 Strength**: Physical tasks and exercise
-- **🧠 Intelligence**: Learning and mental challenges  
-- **⚡ Agility**: Quick tasks and time management
-- **❤️ HP (Health Points)**: Overall well-being
-- **🔮 MP (Magic Points)**: Creative and spiritual activities
-
-### Quest Types
-- 📋 **Daily Quests**: Regular tasks and habits
-- 🏆 **Weekly Challenges**: Bigger goals and projects
-- 👹 **Boss Battles**: Major life challenges and milestones
-- 🎯 **Side Quests**: Optional productivity boosters
-
-### Boss Battle System
-- Defeat bosses representing your bad habits
-- Each quest completion deals damage to the boss
-- Bosses have special abilities that challenge your consistency
-- Defeating bosses rewards you with loot, XP, and achievements
-
----
-
-## 🔥 What's Coming Next?
-
-- [ ] **iOS App Release**: Bringing Routica to iPhone users
-- [ ] **Desktop Application**: Cross-platform desktop experience
-- [ ] **Advanced AI Features**: More sophisticated personalization
-- [ ] **Expanded Skill Trees**: Deeper RPG mechanics and specializations
-- [ ] **Smart Device Integration**: Track real-world activities automatically
-- [ ] **Voice Assistant Integration**: Complete quests using voice commands
-
----
-
-## 🤝 Contributing
-
-We welcome contributions from the community! Here's how you can help:
-
-### Ways to Contribute
-- 🐛 **Bug Reports**: Found an issue? Let us know!
-- 💡 **Feature Requests**: Have an idea? We'd love to hear it!
-- 🔧 **Code Contributions**: Submit pull requests for improvements
-- 📖 **Documentation**: Help improve our guides and tutorials
-- 🌍 **Translations**: Make Routica accessible worldwide
-
-### Development Setup
-
-```bash
-# Fork the repository
-git fork https://github.com/your-username/routica.git
-
-# Create a feature branch
-git checkout -b feature/amazing-feature
-
-# Make your changes and commit
-git commit -m "Add amazing feature"
-
-# Push to your fork
-git push origin feature/amazing-feature
-
-# Create a Pull Request
-```
+- Modern architecture
+- Efficient data structure
+- JSON schema validation
+- Timestamp tracking
+- Flexible configuration system
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ---
 
-## 🙏 Acknowledgments
+## 🤝 Contributing
 
-- Thanks to all contributors who help make Routica better
-- Inspired by classic RPG games and modern productivity methods
-- Special thanks to the open-source community
+Contributions, issues, and feature requests are welcome!
+
+Feel free to check the [issues page](../../issues).
 
 ---
 
-## 📞 Support & Contact
+## 💖 Show Your Support
 
-- 📧 **Email**: Not Sat Yet!
-- 💬 **Discord**: Not Sat Yet!
-- 🐦 **Twitter**: Not Sat Yet!
-- 📱 **Instagram**: Not Sat Yet!
+Give a ⭐ if this project helped you build better habits!
 
 ---
 
 <div align="center">
 
-![GitHub stars](https://img.shields.io/github/stars/your-username/routica?style=social)
-![GitHub forks](https://img.shields.io/github/forks/your-username/routica?style=social)
-![GitHub issues](https://img.shields.io/github/issues/your-username/routica)
-![GitHub license](https://img.shields.io/github/license/your-username/routica)
-
-**Made with ❤️ by the Parsa Nasiri**
-
-*Level up your productivity, one quest at a time!*
-
-⭐ **If you find Routica useful, please give us a star!** ⭐
+**Made with ❤️ and lots of ☕**
 
 </div>
 
 ---
-
 ---
 
 <div align="center" dir="rtl">
 
-# 🎮 روتیکا - اپلیکیشن گیمیفای شده عادت‌سازی
+# 🎯 Routica
 
-*کارهای روزانه و یادگیری خود را به یک ماجراجویی حماسی RPG تبدیل کنید!*
+### *عادت‌های بهتر بساز، یک روز در یک زمان*
 
-[📱 دانلود](https://github.com/your-username/routica/releases) • [✨ ویژگی‌ها](#-ویژگی‌های-کلیدی) • [🚀 شروع به کار](#-شروع-به-کار) • [📖 مستندات](#-مستندات)
+![وضعیت](https://img.shields.io/badge/وضعیت-فعال-success.svg)
+![نسخه](https://img.shields.io/badge/نسخه-1.0.0-blue.svg)
+![مجوز](https://img.shields.io/badge/مجوز-MIT-green.svg)
+![ساخته شده با عشق](https://img.shields.io/badge/ساخته%20شده%20با-❤️-red.svg)
 
-</div>
+**یک برنامه قدرتمند و ساده برای ردیابی عادت‌ها که روتین‌های روزانه شما را به موفقیت پایدار تبدیل می‌کند**
 
----
-
-## 🌟 درباره روتیکا
-
-<div dir="rtl">
-
-به **روتیکا** خوش آمدید، اپلیکیشن انقلابی عادت‌سازی که کارهای روزانه و یادگیری شما را به یک تجربه جذاب RPG تبدیل می‌کند. برخلاف ردیاب‌های عادت سنتی، روتیکا با ترکیب شخصی‌سازی مبتنی بر هوش مصنوعی، یادگیری با تکرار فاصله‌دار، ویژگی‌های اجتماعی چندنفره و زیبایی‌شناسی تاریک فانتزی، تجربه‌ای اعتیادآور و متمرکز بر حفظ کاربر ایجاد می‌کند.
-
-با تکمیل ماموریت‌های روزانه، کسب XP، ارتقاء شخصیت خود و مبارزه با باس‌های فزاینده‌ای که عادت‌های بد شما را نمایندگی می‌کنند، عادت بسازید. این اپلیکیشن از اصول روانشناختی (گیمیفیکیشن، پاسخگویی اجتماعی، تکرار فاصله‌دار) برای اطمینان از تعامل طولانی‌مدت استفاده می‌کند.
-
-</div>
+[ویژگی‌ها](#-ویژگی‌ها) • [کاربردها](#-کاربردها) • [نحوه کار](#-نحوه-کار) • [شروع کنید](#-سفر-خود-را-شروع-کنید)
 
 ---
 
-## 🎯 ویژگی‌های کلیدی
+</div>
 
 <div dir="rtl">
 
-### 🆙 ردیابی عادت گیمیفای شده
-- **سیستم پویای ماموریت**: عادت‌های خود را به ماموریت‌های RPG با پاداش XP تبدیل کنید
-- **پیشرفت شخصیت**: سطح خود را بالا ببرید، آمار را افزایش دهید (HP, MP, قدرت، هوش)
-- **نبردهای باس**: با باس‌های حماسی که عادت‌های بد شما را نمایندگی می‌کنند مبارزه کنید
-- **سیستم دستاورد**: نشان‌ها، عناوین و پاداش‌ها را برای نقاط عطف باز کنید
+## 🌟 چرا Routica؟
 
-### 🧠 سیستم هوشمند یادگیری
-- **تکرار فاصله‌دار**: مهارت‌های جدید را با برنامه‌ریزی بررسی علمی تسلط کنید
-- **مستر هوش مصنوعی**: پیشنهادات و بینش‌های شخصی‌سازی شده ماموریت دریافت کنید
-- **ماموریت‌های یادگیری**: اهداف آموزشی را با معیارهای حفظ حافظه ایجاد و پیگیری کنید
-
-### 👥 ویژگی‌های اجتماعی
-- **گیلدها**: با دوستان خود برای چالش‌های جمعی متحد شوید
-- **لیدربوردها**: به صورت جهانی یا با دوستان رقابت کنید
-- **ماموریت‌های همکاری**: برای اهداف مشترک و پاسخگویی تیمی شوید
-- **چالش‌های دوستی**: مسابقات 1v1 عادت
-
-### 🎨 شخصی‌سازی و سفارشی‌سازی
-- **ساخت شخصیت**: آواتار منحصر به فرد خود را طراحی کنید
-- **زیبایی‌شناسی تاریک فانتزی**: تجربه بصری جذاب
-- **ماموریت‌های شخصی‌سازی شده**: هوش مصنوعی چالش‌ها را بر اساس اهداف شما تنظیم می‌کند
-- **گزینه‌های تم**: حالت تاریک، روشن و تم‌های سفارشی (Pro)
-
-### 📊 تحلیل‌ها و بینش‌ها
-- **آمار دقیق**: پیشرفت خود را با نمودارهای زیبا پیگیری کنید
-- **الگوهای عادت**: زمان‌ها و روزهای پرکاربرد خود را کشف کنید
-- **ردیابی استرک**: ثبات خود را تجسم کنید
-- **بینش‌های عملکرد**: توصیه‌های مبتنی بر هوش مصنوعی برای بهبود
-
-</div>
+<table>
+<tr>
+<td width="33%" align="center">
+<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Chart%20Increasing.png" width="60" />
+<h3>هوشمند و انعطاف‌پذیر</h3>
+همه عادت‌ها یکسان نیستند. با فواصل روزانه، هفتگی، ماهانه یا سفارشی خود را با سبک زندگی‌تان تطبیق دهید.
+</td>
+<td width="33%" align="center">
+<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rainbow.png" width="60" />
+<h3>زیبا و شخصی</h3>
+از میان رنگ‌ها و آیکون‌های پرجنب‌وجوش انتخاب کنید. ردیاب خود را به اندازه اهدافتان انگیزه‌بخش کنید.
+</td>
+<td width="33%" align="center">
+<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="60" />
+<h3>بینش‌آور</h3>
+پیشرفت را دنبال کنید، زنجیره‌های موفقیت بسازید، الگوها را درک کنید. یادداشت اضافه کنید تا سفرتان را به یاد بیاورید.
+</td>
+</tr>
+</table>
 
 ---
 
-## 🏗️ معماری فنی
+## ✨ ویژگی‌ها
 
-<div dir="rtl">
+### 📅 **گزینه‌های انعطاف‌پذیر تکرار**
 
-### زیرساخت بک‌اند
-- **پایگاه داده**: Supabase (PostgreSQL)
-- **احراز هویت**: Supabase Auth (Google OAuth, Email/Password)
-- **برخط**: Supabase Realtime برای ویژگی‌های چندنفره
-- **ذخیره‌سازی**: Supabase Storage برای آواتارها و دارایی‌های کاربر
-- **یکپارچه‌سازی هوش مصنوعی**: نقطه پایانی Webhook برای اتوماسیون n8n و مستر هوش مصنوعی
-- **API**: RESTful API از طریق Supabase Edge Functions
+| نوع تکرار | توضیحات | مثال |
+|:---------|:-------|:-----|
+| 🌞 **روزانه** | هر روز | مدیتیشن، نوشیدن آب |
+| 📆 **هفتگی** | X بار در هفته | باشگاه 3 بار در هفته |
+| 🗓️ **ماهانه** | X بار در ماه | 4 کتاب در ماه |
+| 🔄 **سفارشی** | هر X روز | ژورنال نویسی هر 3 روز |
+| 📍 **روزهای خاص** | انتخاب دقیق روزهای هفته | ورزش دوشنبه/چهارشنبه/جمعه |
 
-### استک فرانت‌اند
-- **فریمورک**: React Native / Flutter (کراس‌پلتفرم)
-- **مدیریت حالت**: Redux / Zustand
-- **کتابخانه UI**: کامپوننت‌های سفارشی با استایل الهام‌گرفته از Tailwind
-- **انیمیشن‌ها**: Framer Motion / Lottie
-- **نمودارها**: Recharts برای تحلیل‌ها
+### ⏰ **یادآورهای هوشمند**
 
-</div>
+> 🔔 با اعلان‌های هوشمند هرگز عادت‌های خود را فراموش نکنید
 
----
+- ✅ چندین زمان یادآوری برای هر عادت
+- ✅ الگوهای روزانه، روزهای کاری، آخر هفته یا یک‌بار
+- ✅ زمان‌بندی عالی برای روتین‌های صبح، بعدازظهر و شب
 
-## 📱 اسکرین‌شات‌های اپلیکیشن
+### 📊 **سیستم ردیابی کامل**
 
-<div dir="rtl">
+```
+✓ انجام شد → عادت‌های تکمیل شده را علامت بزنید
+⊘ رد شد   → استراحت‌های آگاهانه
+✗ از دست رفت → ردیابی صادقانه
+📈 تاریخچه → نمای کامل پیشرفت
+```
 
-*(اسکرین‌شات‌های اپلیکیشن خود را اینجا اضافه کنید)*
+### 📝 **یادداشت‌ها و تأملات روزانه**
 
-</div>
+- 💭 زمینه را به سفر خود اضافه کنید (تا 500 کاراکتر)
+- 🎉 پیروزی‌های خود را جشن بگیرید
+- 🤔 بفهمید چه چیزی کارساز است
+- 💡 از الگوهای خود یاد بگیرید
+
+### 🎨 **سفارشی‌سازی بصری**
 
 <div align="center">
-  <img src="screenshots/home_screen.png" width="200" alt="صفحه اصلی">
-  <img src="screenshots/quest_screen.png" width="200" alt="صفحه ماموریت">
-  <img src="screenshots/boss_battle.png" width="200" alt="نبرد باس">
-  <img src="screenshots/social_features.png" width="200" alt="ویژگی‌های اجتماعی">
-</div>
 
----
-
-## 🚀 شروع به کار
-
-<div dir="rtl">
-
-### نصب
-
-```bash
-# کلون کردن مخزن
-git clone https://github.com/your-username/routica.git
-
-# ورود به دایرکتوری پروژه
-cd routica
-
-# نصب وابستگی‌ها
-npm install
-
-# اجرای برنامه
-npm start
-```
-
-### راه‌اندازی سریع
-
-1. **ایجاد حساب کاربری**: با ایمیل یا Google OAuth ثبت‌نام کنید
-2. **طراحی شخصیت**: آواتار و آمار اولیه خود را انتخاب کنید
-3. **تنظیم اهداف**: کارهای روزانه و اهداف بلندمدت را اضافه کنید
-4. **شروع ماجراجویی**: ماموریت‌ها را تکمیل کنید و رشد شخصیت خود را تماشا کنید!
+🎨 **آیکون‌ها** | 🌈 **رنگ‌ها** | ✨ **تم‌ها**
+:---:|:---:|:---:
+طیف وسیع | کدهای رنگی | شخصی‌سازی شده
 
 </div>
 
 ---
 
-## 📖 مستندات
+## 💡 کاربردها
 
-<div dir="rtl">
+<details>
+<summary>🏃‍♂️ <b>سلامت و تناسب اندام</b></summary>
 
-- [راهنمای کاربر](docs/user-guide.md)
-- [مستندات توسعه‌دهنده](docs/developer-docs.md)
-- [مرجع API](docs/api-reference.md)
-- [راهنمای مشارکت](docs/contributing.md)
+- ورزش روزانه
+- ردیابی نوشیدن آب
+- ویتامین‌ها و مکمل‌ها
+- روتین کشش
+- برنامه خواب
+- برنامه‌ریزی غذا
 
-</div>
+</details>
+
+<details>
+<summary>🚀 <b>بهره‌وری</b></summary>
+
+- نوشتن روزانه
+- صندوق ورودی خالی
+- جلسات کار متمرکز
+- زمان یادگیری
+- نقاط عطف پروژه
+- کامیت‌های کد
+
+</details>
+
+<details>
+<summary>🧘 <b>ذهن‌آگاهی</b></summary>
+
+- تمرین مدیتیشن
+- ژورنال قدردانی
+- تمرین‌های تنفسی
+- دیتاکس دیجیتال
+- خوردن آگاهانه
+- پیاده‌روی در طبیعت
+
+</details>
+
+<details>
+<summary>📚 <b>رشد شخصی</b></summary>
+
+- خواندن روزانه
+- یادگیری زبان
+- تمرین موسیقی
+- توسعه مهارت
+- دوره‌های آنلاین
+- پروژه‌های خلاقانه
+
+</details>
+
+<details>
+<summary>💆 <b>مراقبت از خود</b></summary>
+
+- روتین مراقبت از پوست
+- زمان بدون تلفن
+- ارتباطات اجتماعی
+- سرگرمی و لذت
+- روزهای استراحت
+- فعالیت‌های شخصی
+
+</details>
+
+<details>
+<summary>🏠 <b>خانه و زندگی</b></summary>
+
+- برنامه نظافت
+- آماده‌سازی غذا
+- مراقبت از گیاهان
+- بودجه‌بندی
+- مرتب‌سازی
+- نگهداری خانه
+
+</details>
 
 ---
 
-## 🎮 مکانیک‌های بازی
+## 🎯 نحوه کار
 
-<div dir="rtl">
+<div align="center">
 
-### پیشرفت شخصیت
-- **💪 قدرت**: کارهای فیزیکی و ورزش
-- **🧠 هوش**: یادگیری و چالش‌های ذهنی
-- **⚡ چابکی**: کارهای سریع و مدیریت زمان
-- **❤️ HP (امتیاز سلامتی)**: سلامت کلی
-- **🔮 MP (امتیاز جادو)**: فعالیت‌های خلاق و معنوی
-
-### انواع ماموریت
-- 📋 **ماموریت‌های روزانه**: کارها و عادات منظم
-- 🏆 **چالش‌های هفتگی**: اهداف و پروژه‌های بزرگ‌تر
-- 👹 **نبردهای باس**: چالش‌های بزرگ زندگی و نقاط عطف
-- 🎯 **ماموریت‌های جانبی**: تقویت‌کننده‌های اختیاری بهره‌وری
-
-### سیستم نبرد باس
-- باس‌هایی که عادت‌های بد شما را نمایندگی می‌کنند را شکست دهید
-- هر تکمیل ماموریت به باس آسیب می‌زند
-- باس‌ها توانایی‌های ویژه‌ای دارند که ثبات شما را به چالش می‌کشند
-- شکست دادن باس‌ها شما را با غنیمت، XP و دستاوردها پاداش می‌دهد
-
-</div>
-
----
-
-## 🔥 چه چیزی در راه است؟
-
-<div dir="rtl">
-
-- [ ] **انتشار اپلیکیشن iOS**: آوردن روتیکا برای کاربران آیفون
-- [ ] **اپلیکیشن دسکتاپ**: تجربه دسکتاپ کراس‌پلتفرم
-- [ ] **ویژگی‌های پیشرفته هوش مصنوعی**: شخصی‌سازی پیچیده‌تر
-- [ ] **درختان مهارت گسترش‌یافته**: مکانیک‌های عمیق‌تر RPG و تخصص‌ها
-- [ ] **یکپارچه‌سازی با دستگاه‌های هوشمند**: ردیابی خودکار فعالیت‌های دنیای واقعی
-- [ ] **یکپارچه‌سازی دستیار صوتی**: تکمیل ماموریت‌ها با استفاده از دستورات صوتی
-
-</div>
-
----
-
-## 🤝 مشارکت
-
-<div dir="rtl">
-
-ما از مشارکت‌های جامعه استقبال می‌کنیم! اینطور که می‌توانید کمک کنید:
-
-### راه‌های مشارکت
-- 🐛 **گزارش اشکالات**: مشکلی پیدا کردید؟ به ما اطلاع دهید!
-- 💡 **درخواست ویژگی**: ایده‌ای دارید؟ دوست داریم آن را بشنویم!
-- 🔧 **مشارکت‌های کد**: پول ریکوئست‌ها را برای بهبودها ارسال کنید
-- 📖 **مستندات**: در بهبود راهنماها و آموزش‌ها کمک کنید
-- 🌍 **ترجمه‌ها**: روتیکا را در سراسر جهان در دسترس قرار دهید
-
-### راه‌اندازی توسعه
-
-```bash
-# فورک کردن مخزن
-git fork https://github.com/your-username/routica.git
-
-# ایجاد شاخه ویژگی
-git checkout -b feature/amazing-feature
-
-# ایجاد تغییرات و کامیت
-git commit -m "Add amazing feature"
-
-# پوش به فورک خود
-git push origin feature/amazing-feature
-
-# ایجاد پول ریکوئست
+```mermaid
+graph LR
+    A[🎨 ایجاد عادت] --> B[⚙️ تنظیم تکرار]
+    B --> C[⏰ افزودن یادآور]
+    C --> D[📊 ردیابی روزانه]
+    D --> E[📝 افزودن یادداشت]
+    E --> F[🏆 ایجاد ثبات]
+    F --> G[✨ دستیابی به اهداف]
 ```
 
 </div>
+
+### راهنمای گام‌به‌گام
+
+| گام | عمل | توضیحات |
+|:---:|:---|:--------|
+| **۱** | 🎨 **ایجاد** | عادت را نام‌گذاری کنید، آیکون و رنگ انتخاب کنید |
+| **۲** | ⚙️ **پیکربندی** | تعیین کنید چند وقت یک‌بار (روزانه، هفتگی، سفارشی) |
+| **۳** | ⏰ **یادآوری** | زمان‌های اعلان را اضافه کنید |
+| **۴** | 📊 **ردیابی** | انجام شد، رد شد یا از دست رفت را روزانه علامت بزنید |
+| **۵** | 📝 **تأمل** | یادداشتی درباره تجربه‌تان اضافه کنید |
+| **۶** | 🏆 **موفقیت** | در طول زمان ثبات بسازید |
+
+---
+
+## 🚀 سفر خود را شروع کنید
+
+> 💪 ساختن عادت درباره کمال نیست—درباره پیشرفت است.
+
+<div align="center">
+
+### **Routica به شما کمک می‌کند به طور مداوم حاضر شوید، الگوهای خود را درک کنید و پیروزی‌هایتان را جشن بگیرید.**
+
+🌱 هر سفری با یک قدم شروع می‌شود. آن را با Routica ارزشمند کنید.
+
+---
+
+### ⭐ **اگر به ساختن عادت‌های بهتر اعتقاد دارید، به این مخزن ستاره بدهید!**
+
+</div>
+
+---
+
+## 📸 تصاویر
+
+*به زودی...*
+
+---
+
+## 🛠️ فناوری‌های استفاده شده
+
+- معماری مدرن
+- ساختار داده کارآمد
+- اعتبارسنجی JSON schema
+- ردیابی برچسب زمانی
+- سیستم پیکربندی انعطاف‌پذیر
 
 ---
 
 ## 📄 مجوز
 
-<div dir="rtl">
-
-این پروژه تحت مجوز MIT منتشر شده است - برای جزئیات به فایل [LICENSE](LICENSE) مراجعه کنید.
-
-</div>
+این پروژه تحت مجوز MIT منتشر شده است.
 
 ---
 
-## 🙏 قدردانی‌ها
+## 🤝 مشارکت
 
-<div dir="rtl">
+مشارکت‌ها، مشکلات و درخواست‌های ویژگی خوشامد است!
 
-- از تمام مشارکت‌کنندگانی که روتیکا را بهتر می‌کنند متشکریم
-- الهام گرفته از بازی‌های کلاسیک RPG و روش‌های مدرن بهره‌وری
-- تشکر ویژه از جامعه متن‌باز
-
-</div>
+لطفاً [صفحه مشکلات](../../issues) را بررسی کنید.
 
 ---
 
-## 📞 پشتیبانی و تماس
+## 💖 حمایت خود را نشان دهید
 
-<div dir="rtl">
-
-- 📧 **ایمیل**: هنوز ست نشده!
-- 💬 **دیسکورد**: هنوز ست نشده!
-- 🐦 **توییتر**: هنوز ست نشده!
-- 📱 **اینستاگرام**: هنوز ست نشده!
-
-</div>
+اگر این پروژه به شما در ساختن عادت‌های بهتر کمک کرد، یک ⭐ بدهید!
 
 ---
 
-<div align="center" dir="rtl">
+<div align="center">
 
-![GitHub stars](https://img.shields.io/github/stars/your-username/routica?style=social)
-![GitHub forks](https://img.shields.io/github/forks/your-username/routica?style=social)
-![GitHub issues](https://img.shields.io/github/issues/your-username/routica)
-![GitHub license](https://img.shields.io/github/license/your-username/routica)
+**ساخته شده با ❤️ و مقدار زیادی ☕**
 
-**ساخته شده با ❤️ توسط پارسا نصیری**
-
-*بهره‌وری خود را ارتقا دهید، یک ماموریت در هر زمان!*
-
-⭐ **اگر روتیکا را مفید یافتید، لطفاً به ما ستاره بدهید!** ⭐
+</div>
 
 </div>
