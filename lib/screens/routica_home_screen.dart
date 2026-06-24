@@ -102,18 +102,7 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-child: Column(
-  mainAxisAlignment: MainAxisAlignment.start,
-  children: <Widget>[
-    _buildCurrentView(),
-    ElevatedButton(
-      onPressed: () {
-        _openHabitForm(); // Add habit creation
-      },
-      child: const Text('New Habit'),
-    ),
-  ],
-),
+          child: _buildCurrentView(),
         ),
       ),
       bottomNavigationBar: _buildNavigationBar(),
