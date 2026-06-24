@@ -1,0 +1,72 @@
+name: Build APK
+
+# Builds the Android APK and uploads it as a downloadable artifact so it can be
+# installed and tested on a device. Runs automatically on pushes / PRs and can
+# also be triggered manually from the Actions tab (Run workflow).
+on:
+  push:
+    branches: [main, master, "devin/**"]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+# Cancel superseded runs on the same ref to save CI minutes.
+concurrency:
+  group: build-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.35.0"
+
+jobs:
+  build-apk:
+    name: Build release APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Flutter ${{ env.FLUTTER_VERSION }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Show Flutter version
+        run: flutter --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze project
+        run: flutter analyze
+        continue-on-error: true
+
+      - name: Build universal release APK
+        run: flutter build apk --release
+
+      - name: Build per-ABI release APKs
+        run: flutter build apk --release --split-per-abi
+
+      - name: Upload universal APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: routica-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload per-ABI APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: routica-release-apk-split
+          path: build/app/outputs/flutter-apk/app-*-release.apk
+          if-no-files-found: error
+          retention-days: 30

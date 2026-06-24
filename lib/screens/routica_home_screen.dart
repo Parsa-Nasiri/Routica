@@ -3,7 +3,6 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
 
 import '../models/achievement.dart';
 import '../models/habit.dart';
@@ -28,63 +27,29 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
   // 'habits' | 'analytics' | 'achievements' | 'settings'
   String _currentView = 'habits';
 
-  static const String _metaBoxName = 'achievement_meta';
-  static const String _celebratedKey = 'celebrated';
-  static const String _initializedKey = 'initialized';
-
-  Box? _metaBox;
-  Set<String> _celebrated = {};
-  bool _trackerReady = false;
-  bool _initialized = false;
+  // Snapshot of unlocked achievement ids at the moment habit data finished
+  // loading. New unlocks are diffed against this so the congratulation only
+  // fires for achievements earned during the current session.
+  Set<String>? _baseline;
 
   final Queue<Achievement> _celebrationQueue = Queue<Achievement>();
   OverlayEntry? _islandEntry;
 
-  @override
-  void initState() {
-    super.initState();
-    _initTracker();
-  }
-
-  Future<void> _initTracker() async {
-    final box = await Hive.openBox(_metaBoxName);
-    _metaBox = box;
-    _celebrated =
-        (box.get(_celebratedKey, defaultValue: <String>[]) as List)
-            .cast<String>()
-            .toSet();
-    _initialized = box.get(_initializedKey, defaultValue: false) as bool;
-    _trackerReady = true;
-    // Reconcile against whatever is already loaded so the first session after a
-    // restart seeds silently instead of celebrating pre-existing achievements.
-    _reconcileAchievements(ref.read(achievementsProvider));
-  }
-
-  Future<void> _persistTracker() async {
-    await _metaBox?.put(_celebratedKey, _celebrated.toList());
-    await _metaBox?.put(_initializedKey, _initialized);
+  void _establishBaseline() {
+    _baseline ??=
+        ref.read(achievementsProvider).where((a) => a.unlocked).map((a) => a.id).toSet();
   }
 
   void _reconcileAchievements(List<Achievement> achievements) {
-    if (!_trackerReady) return;
+    final baseline = _baseline;
+    if (baseline == null) return; // Wait until the load baseline is set.
 
     final unlocked = achievements.where((a) => a.unlocked).toList();
-    final unlockedIds = unlocked.map((a) => a.id).toSet();
-
-    if (!_initialized) {
-      // First run: remember what's already unlocked without celebrating it.
-      _initialized = true;
-      _celebrated = unlockedIds;
-      _persistTracker();
-      return;
-    }
-
-    final newIds = unlockedIds.difference(_celebrated);
+    final newIds =
+        unlocked.map((a) => a.id).toSet().difference(baseline);
     if (newIds.isEmpty) return;
 
-    _celebrated.addAll(newIds);
-    _persistTracker();
-
+    baseline.addAll(newIds);
     for (final achievement in unlocked.where((a) => newIds.contains(a.id))) {
       _celebrationQueue.add(achievement);
     }
@@ -120,6 +85,14 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Establish the baseline as soon as habits finish loading, then only
+    // celebrate achievements unlocked after that point.
+    if (ref.watch(habitsLoadedProvider)) {
+      _establishBaseline();
+    }
+    ref.listen<bool>(habitsLoadedProvider, (previous, loaded) {
+      if (loaded) _establishBaseline();
+    });
     ref.listen<List<Achievement>>(achievementsProvider, (previous, next) {
       _reconcileAchievements(next);
     });
