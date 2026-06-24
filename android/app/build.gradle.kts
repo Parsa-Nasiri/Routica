@@ -54,7 +54,15 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            // Use the real release keystore when key.properties is present
+            // (e.g. local/production builds). Otherwise fall back to debug
+            // signing so CI and contributor builds still produce an
+            // installable APK without requiring secrets.
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }

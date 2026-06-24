@@ -1,11 +1,17 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../models/achievement.dart';
 import '../models/habit.dart';
+import '../providers/achievement_provider.dart';
 import '../theme/routica_theme.dart';
+import '../widgets/achievement_island.dart';
 import '../widgets/enhanced_habit_card.dart';
 import '../providers/habit_repository.dart';
+import 'achievements_screen.dart';
 import 'analytics_screen.dart';
 import 'habit_form_screen.dart';  
 import 'settings_screen.dart';
@@ -18,10 +24,79 @@ class RouticaHomeScreen extends ConsumerStatefulWidget {
 }
 
 class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
-  String _currentView = 'habits'; // 'habits' | 'analytics' | 'settings'
+  // 'habits' | 'analytics' | 'achievements' | 'settings'
+  String _currentView = 'habits';
+
+  // Snapshot of unlocked achievement ids at the moment habit data finished
+  // loading. New unlocks are diffed against this so the congratulation only
+  // fires for achievements earned during the current session.
+  Set<String>? _baseline;
+
+  final Queue<Achievement> _celebrationQueue = Queue<Achievement>();
+  OverlayEntry? _islandEntry;
+
+  void _establishBaseline() {
+    _baseline ??=
+        ref.read(achievementsProvider).where((a) => a.unlocked).map((a) => a.id).toSet();
+  }
+
+  void _reconcileAchievements(List<Achievement> achievements) {
+    final baseline = _baseline;
+    if (baseline == null) return; // Wait until the load baseline is set.
+
+    final unlocked = achievements.where((a) => a.unlocked).toList();
+    final newIds =
+        unlocked.map((a) => a.id).toSet().difference(baseline);
+    if (newIds.isEmpty) return;
+
+    baseline.addAll(newIds);
+    for (final achievement in unlocked.where((a) => newIds.contains(a.id))) {
+      _celebrationQueue.add(achievement);
+    }
+    _showNextCelebration();
+  }
+
+  void _showNextCelebration() {
+    if (_islandEntry != null || _celebrationQueue.isEmpty || !mounted) return;
+
+    final achievement = _celebrationQueue.removeFirst();
+    HapticFeedback.heavyImpact();
+
+    final entry = OverlayEntry(
+      builder: (context) => AchievementIsland(
+        achievement: achievement,
+        onDismiss: () {
+          _islandEntry?.remove();
+          _islandEntry = null;
+          _showNextCelebration();
+        },
+      ),
+    );
+    _islandEntry = entry;
+    Overlay.of(context, rootOverlay: true).insert(entry);
+  }
+
+  @override
+  void dispose() {
+    _islandEntry?.remove();
+    _islandEntry = null;
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Establish the baseline as soon as habits finish loading, then only
+    // celebrate achievements unlocked after that point.
+    if (ref.watch(habitsLoadedProvider)) {
+      _establishBaseline();
+    }
+    ref.listen<bool>(habitsLoadedProvider, (previous, loaded) {
+      if (loaded) _establishBaseline();
+    });
+    ref.listen<List<Achievement>>(achievementsProvider, (previous, next) {
+      _reconcileAchievements(next);
+    });
+
     return Scaffold(
       backgroundColor: const Color(0xFF0C1421),
       body: SafeArea(
@@ -65,10 +140,11 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavDestination(0, Icons.home_outlined, Icons.home_rounded, 'Home'),
-              _buildNavDestination(1, Icons.query_stats_outlined, Icons.query_stats_rounded, 'Analytics'),
+              _buildNavDestination('habits', Icons.home_outlined, Icons.home_rounded, 'Home'),
+              _buildNavDestination('analytics', Icons.query_stats_outlined, Icons.query_stats_rounded, 'Analytics'),
               const SizedBox(width: 56),
-              _buildNavDestination(2, Icons.settings_outlined, Icons.settings_rounded, 'Settings'),
+              _buildNavDestination('achievements', Icons.emoji_events_outlined, Icons.emoji_events_rounded, 'Awards'),
+              _buildNavDestination('settings', Icons.settings_outlined, Icons.settings_rounded, 'Settings'),
             ],
           ),
         ),
@@ -77,49 +153,54 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
   }
 
   Widget _buildNavDestination(
-    int index,
+    String view,
     IconData icon,
     IconData selectedIcon,
     String label,
   ) {
-    final view = index == 0 ? 'habits' : index == 1 ? 'analytics' : 'settings';
     final isSelected = _currentView == view;
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        setState(() => _currentView = view);
-      },
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? RouticaTheme.accent.withOpacity(0.15)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isSelected ? selectedIcon : icon,
-              size: 24,
-              color: isSelected ? RouticaTheme.accent : RouticaTheme.onSurfaceVariant,
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          setState(() => _currentView = view);
+        },
+        behavior: HitTestBehavior.opaque,
+        child: Center(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? RouticaTheme.accent.withOpacity(0.15)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected
-                    ? RouticaTheme.accent
-                    : RouticaTheme.onSurfaceVariant,
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  isSelected ? selectedIcon : icon,
+                  size: 24,
+                  color: isSelected ? RouticaTheme.accent : RouticaTheme.onSurfaceVariant,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: isSelected
+                        ? RouticaTheme.accent
+                        : RouticaTheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -145,6 +226,14 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
       case 'analytics':
         return AnalyticsScreen(
           habits: habits,
+          onBack: () {
+            setState(() {
+              _currentView = 'habits';
+            });
+          },
+        );
+      case 'achievements':
+        return AchievementsScreen(
           onBack: () {
             setState(() {
               _currentView = 'habits';

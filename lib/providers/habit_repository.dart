@@ -26,6 +26,10 @@ class HabitRepository extends Notifier<List<Habit>> {
       state = _box.values.toList();
     }
 
+    // Signal that the initial load from storage is complete so listeners can
+    // distinguish "freshly loaded data" from genuine in-session changes.
+    ref.read(habitsLoadedProvider.notifier).markLoaded();
+
     // Schedule notifications for existing habits
     for (final habit in state) {
       if (habit.reminders.isNotEmpty) {
@@ -85,3 +89,16 @@ class HabitRepository extends Notifier<List<Habit>> {
 final habitRepositoryProvider = NotifierProvider<HabitRepository, List<Habit>>(() {
   return HabitRepository();
 });
+
+/// Becomes `true` once the habit repository has finished its initial load from
+/// storage. Used to establish the achievement "baseline" so already-unlocked
+/// achievements are not re-celebrated on app launch.
+class HabitsLoadedNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void markLoaded() => state = true;
+}
+
+final habitsLoadedProvider =
+    NotifierProvider<HabitsLoadedNotifier, bool>(HabitsLoadedNotifier.new);
