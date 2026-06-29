@@ -336,7 +336,7 @@ class NotificationService {
       }
     }
     // Also cancel smart reminder
-    await _notifications.cancel('$habitId_smart'.hashCode);
+    await _notifications.cancel('${habitId}_smart'.hashCode);
   }
 
   Future<void> cancelAllNotifications() async {

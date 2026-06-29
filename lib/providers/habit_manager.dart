@@ -110,7 +110,6 @@ class HabitManager {
   static HabitAnalytics analyzeHabit(Habit habit) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final todayKey = _dateKey(today);
 
     // Walk from the habit's creation date forward through every calendar day.
     final createdDate = DateTime(

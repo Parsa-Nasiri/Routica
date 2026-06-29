@@ -23,7 +23,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _notificationsEnabled = true;
   bool _smartRemindersEnabled = false;
-  int _smartReminderHour = 20; // 8 PM default
+  final int _smartReminderHour = 20; // 8 PM default
 
   // ── Clear data ───────────────────────────────────────────────
 

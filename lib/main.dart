@@ -28,7 +28,7 @@ void main() async {
   // Initialize Supabase
   await Supabase.initialize(
     url: SupabaseConfig.url,
-    anonKey: SupabaseConfig.anonKey,
+    publishableKey: SupabaseConfig.anonKey,
   );
 
   // Initialize notification service
@@ -48,7 +48,7 @@ class RouticaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseTheme = ThemeData.dark(useMaterial3: true);
+    final baseTheme = ThemeData.dark();
 
     return MaterialApp(
       title: 'Routica',
@@ -162,7 +162,6 @@ class RouticaApp extends StatelessWidget {
             );
           }),
         ),
-        useMaterial3: true,
       ),
       home: const AuthWrapper(),
     );
