@@ -62,7 +62,7 @@ class _AchievementIslandState extends State<AchievementIsland>
     final palette = <Color>[
       base,
       RouticaTheme.accent,
-      const RouticaTheme.warning,
+      RouticaTheme.warning,
       Colors.white,
       const Color(0xFFF472B6),
     ];
@@ -162,7 +162,7 @@ class _AchievementIslandState extends State<AchievementIsland>
           margin: const EdgeInsets.symmetric(horizontal: 20),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           decoration: BoxDecoration(
-            color: const RouticaTheme.scaffoldBackground,
+            color: RouticaTheme.scaffoldBackground,
             borderRadius: BorderRadius.circular(32),
             border: Border.all(color: achievement.color.withOpacity(0.35)),
             boxShadow: [
@@ -171,10 +171,10 @@ class _AchievementIslandState extends State<AchievementIsland>
                 blurRadius: 28,
                 spreadRadius: 1,
               ),
-              const BoxShadow(
+              BoxShadow(
                 color: Colors.black.withOpacity(0.4),
                 blurRadius: 16,
-                offset: Offset(0, 8),
+                offset: const Offset(0, 8),
               ),
             ],
           ),

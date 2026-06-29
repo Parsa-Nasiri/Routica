@@ -158,9 +158,9 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
     final isEditing = widget.existing != null;
 
     return Scaffold(
-      backgroundColor: const RouticaTheme.scaffoldBackground,
+      backgroundColor: RouticaTheme.scaffoldBackground,
       appBar: AppBar(
-        backgroundColor: const RouticaTheme.appBar,
+        backgroundColor: RouticaTheme.appBar,
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).maybePop(),
@@ -228,13 +228,13 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
-                color: titleEmpty ? const RouticaTheme.borderStrong : const RouticaTheme.success,
+                color: titleEmpty ? RouticaTheme.borderStrong : RouticaTheme.success,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
-                color: titleEmpty ? const RouticaTheme.borderStrong : const RouticaTheme.success,
+                color: titleEmpty ? RouticaTheme.borderStrong : RouticaTheme.success,
               ),
             ),
             focusedBorder: OutlineInputBorder(
@@ -297,9 +297,9 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
         const SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            color: const RouticaTheme.surface,
+            color: RouticaTheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const RouticaTheme.border),
+            border: Border.all(color: RouticaTheme.border),
           ),
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -373,7 +373,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        backgroundColor: const RouticaTheme.scaffoldBackground,
+        backgroundColor: RouticaTheme.scaffoldBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -456,7 +456,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                                             width: 2,
                                           )
                                         : Border.all(
-                                            color: const RouticaTheme.border,
+                                            color: RouticaTheme.border,
                                             width: 1,
                                           ),
                                   ),
@@ -464,7 +464,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                                     HabitIcons.iconForId(id),
                                     color: selected
                                         ? Color(_color)
-                                        : const RouticaTheme.onSurfaceVariant,
+                                        : RouticaTheme.onSurfaceVariant,
                                     size: 24,
                                   ),
                                 ),
@@ -498,9 +498,9 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
         const SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            color: const RouticaTheme.surface,
+            color: RouticaTheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const RouticaTheme.border),
+            border: Border.all(color: RouticaTheme.border),
           ),
           padding: const EdgeInsets.all(16),
           child: Wrap(
@@ -528,7 +528,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                     borderRadius: BorderRadius.circular(12),
                     border: selected
                         ? Border.all(color: Color(_color), width: 2)
-                        : Border.all(color: const RouticaTheme.border, width: 1),
+                        : Border.all(color: RouticaTheme.border, width: 1),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -540,7 +540,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                         style: TextStyle(
                           color: selected
                               ? Colors.white
-                              : const RouticaTheme.onSurfaceVariant,
+                              : RouticaTheme.onSurfaceVariant,
                           fontSize: 13,
                           fontWeight:
                               selected ? FontWeight.w600 : FontWeight.w500,
@@ -607,9 +607,9 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
         const SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            color: const RouticaTheme.surface,
+            color: RouticaTheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const RouticaTheme.border),
+            border: Border.all(color: RouticaTheme.border),
           ),
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -731,9 +731,9 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
         const SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            color: const RouticaTheme.surface,
+            color: RouticaTheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const RouticaTheme.border),
+            border: Border.all(color: RouticaTheme.border),
           ),
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -808,7 +808,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                         value: _frequencyPeriod,
                         isExpanded: true,
                         underline: const SizedBox(),
-                        dropdownColor: const RouticaTheme.surface,
+                        dropdownColor: RouticaTheme.surface,
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         items: const [
                           DropdownMenuItem(
@@ -884,7 +884,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                   child: Text(
                     '💡 Tip: Set goal > 1 for habits you do multiple times (e.g. 8 glasses of water/day)',
                     style: TextStyle(
-                      color: const RouticaTheme.onSurfaceVariant.withOpacity(0.8),
+                      color: RouticaTheme.onSurfaceVariant.withOpacity(0.8),
                       fontSize: 12,
                     ),
                   ),
@@ -922,12 +922,12 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                 decoration: BoxDecoration(
                   color: _remindersEnabled
                       ? Color(_color).withOpacity(0.6)
-                      : const RouticaTheme.borderStrong,
+                      : RouticaTheme.borderStrong,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: _remindersEnabled
                         ? Color(_color)
-                        : const RouticaTheme.borderStrong,
+                        : RouticaTheme.borderStrong,
                     width: 1.5,
                   ),
                 ),
@@ -956,12 +956,12 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 250),
             decoration: BoxDecoration(
-              color: const RouticaTheme.surface,
+              color: RouticaTheme.surface,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _remindersEnabled
                     ? Color(_color).withOpacity(0.3)
-                    : const RouticaTheme.borderStrong,
+                    : RouticaTheme.borderStrong,
               ),
             ),
             child: IgnorePointer(
@@ -1015,7 +1015,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                                         : _reminderTime!.format(context),
                                     style: TextStyle(
                                       color: _reminderTime == null
-                                          ? const RouticaTheme.onSurfaceVariant
+                                          ? RouticaTheme.onSurfaceVariant
                                           : Colors.white,
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -1080,12 +1080,12 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                                 decoration: BoxDecoration(
                                   color: selected
                                       ? Color(_color)
-                                      : const RouticaTheme.scaffoldBackground,
+                                      : RouticaTheme.scaffoldBackground,
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
                                     color: selected
                                         ? Colors.transparent
-                                        : const RouticaTheme.borderStrong,
+                                        : RouticaTheme.borderStrong,
                                     width: 1.5,
                                   ),
                                 ),
@@ -1095,7 +1095,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                                     style: TextStyle(
                                       color: selected
                                           ? Colors.white
-                                          : const RouticaTheme.onSurfaceVariant,
+                                          : RouticaTheme.onSurfaceVariant,
                                       fontSize: 12,
                                       fontWeight: selected
                                           ? FontWeight.w700
@@ -1157,12 +1157,12 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                 decoration: BoxDecoration(
                   color: _archived
                       ? Color(_color).withOpacity(0.6)
-                      : const RouticaTheme.borderStrong,
+                      : RouticaTheme.borderStrong,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: _archived
                         ? Color(_color)
-                        : const RouticaTheme.borderStrong,
+                        : RouticaTheme.borderStrong,
                     width: 1.5,
                   ),
                 ),
@@ -1206,9 +1206,9 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: const RouticaTheme.surface,
+            color: RouticaTheme.surface,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const RouticaTheme.border),
+            border: Border.all(color: RouticaTheme.border),
           ),
           padding: const EdgeInsets.all(16),
           child: Row(

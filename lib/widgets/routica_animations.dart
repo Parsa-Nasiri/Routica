@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../theme/routica_theme.dart';
@@ -261,14 +263,14 @@ class _RingPainter extends CustomPainter {
     canvas.drawCircle(center, radius, trackPaint);
 
     // Progress arc
-    final sweepAngle = progress * 2 * pi;
+    final sweepAngle = progress * 2 * math.pi;
     final rect = Rect.fromCircle(center: center, radius: radius);
     final arcPaint = Paint()
       ..shader = gradient.createShader(rect)
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
-    canvas.drawArc(rect, -pi / 2, sweepAngle, false, arcPaint);
+    canvas.drawArc(rect, -math.pi / 2, sweepAngle, false, arcPaint);
   }
 
   @override

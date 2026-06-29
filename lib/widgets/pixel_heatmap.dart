@@ -93,14 +93,14 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
         backgroundColor = Color(widget.habit.color);
         break;
       case HabitDayStatus.skipped:
-        backgroundColor = const RouticaTheme.textDisabled.withOpacity(0.5);
+        backgroundColor = RouticaTheme.textDisabled.withOpacity(0.5);
         break;
       case HabitDayStatus.none:
       case null:
         if (isToday) {
           backgroundColor = Colors.white.withOpacity(0.15);
         } else if (isBeforeCreation || !isPast) {
-          backgroundColor = const RouticaTheme.border;
+          backgroundColor = RouticaTheme.border;
         } else {
           backgroundColor = Color(widget.habit.color).withOpacity(0.2);
         }
@@ -143,9 +143,9 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).bottomSheetTheme.backgroundColor ??
-                  const RouticaTheme.surface,
+                  RouticaTheme.surface,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const RouticaTheme.border),
+              border: Border.all(color: RouticaTheme.border),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
@@ -207,7 +207,7 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
                         icon: Icons.skip_next,
                         label: 'Skip',
                         subtitle: 'Intentionally skipped',
-                        color: const RouticaTheme.textDisabled,
+                        color: RouticaTheme.textDisabled,
                         isSelected: status == HabitDayStatus.skipped,
                         onTap: () {
                           widget.onDayTap?.call(day.key, HabitDayStatus.skipped);
@@ -220,7 +220,7 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
                         icon: Icons.clear,
                         label: 'Clear',
                         subtitle: 'Remove status',
-                        color: const RouticaTheme.textDisabled,
+                        color: RouticaTheme.textDisabled,
                         isSelected: status == HabitDayStatus.none,
                         onTap: () {
                           widget.onDayTap?.call(day.key, HabitDayStatus.none);
