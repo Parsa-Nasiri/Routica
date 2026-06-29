@@ -208,7 +208,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
       textColor = Colors.white;
       icon = Icons.check_rounded;
     } else if (status == HabitDayStatus.skipped) {
-      bgColor = const Color(0x33F59E0B);
+      bgColor = RouticaTheme.iconBg(RouticaTheme.warning);
       textColor = RouticaTheme.warning;
       icon = Icons.remove_rounded;
     } else {
@@ -257,7 +257,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
         children: [
           _legendItem('Completed', Color(widget.habit.color), Icons.check),
           const SizedBox(width: 20),
-          _legendItem('Skipped', const Color(0x33F59E0B), Icons.remove),
+          _legendItem('Skipped', RouticaTheme.iconBg(RouticaTheme.warning), Icons.remove),
           const SizedBox(width: 20),
           _legendItem('None', RouticaTheme.surface, null),
         ],

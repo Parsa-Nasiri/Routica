@@ -72,10 +72,10 @@ class AchievementsScreen extends ConsumerWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF1A2332), Color(0xFF18243A)],
+          colors: [RouticaTheme.surface, RouticaTheme.surface],
         ),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0x14FFFFFF)),
+        border: Border.all(color: const RouticaTheme.border),
       ),
       padding: const EdgeInsets.all(20),
       child: Row(
@@ -84,12 +84,12 @@ class AchievementsScreen extends ConsumerWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: const Color(0x33FBBF24),
+              color: RouticaTheme.iconBg(RouticaTheme.warning),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Icon(
               Icons.emoji_events_rounded,
-              color: Color(0xFFFBBF24),
+              color: RouticaTheme.warning,
               size: 30,
             ),
           ),
@@ -112,7 +112,7 @@ class AchievementsScreen extends ConsumerWidget {
                       ? 'Legendary! You collected them all.'
                       : 'Keep building habits to unlock more.',
                   style: const TextStyle(
-                    color: Color(0xFF9AA3B2),
+                    color: RouticaTheme.onSurfaceVariant,
                     fontSize: 12,
                   ),
                 ),
@@ -122,9 +122,9 @@ class AchievementsScreen extends ConsumerWidget {
                   child: LinearProgressIndicator(
                     value: progress,
                     minHeight: 8,
-                    backgroundColor: const Color(0x14FFFFFF),
+                    backgroundColor: const RouticaTheme.border,
                     valueColor: const AlwaysStoppedAnimation<Color>(
-                      Color(0xFFFBBF24),
+                      RouticaTheme.warning,
                     ),
                   ),
                 ),
@@ -154,7 +154,7 @@ class AchievementsScreen extends ConsumerWidget {
                 Text(
                   category.label,
                   style: const TextStyle(
-                    color: Color(0xFF9AA3B2),
+                    color: RouticaTheme.onSurfaceVariant,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -163,7 +163,7 @@ class AchievementsScreen extends ConsumerWidget {
                 Text(
                   '$unlocked/${achievements.length}',
                   style: const TextStyle(
-                    color: Color(0xFF6B7280),
+                    color: RouticaTheme.textDisabled,
                     fontSize: 12,
                   ),
                 ),
@@ -200,16 +200,16 @@ class _AchievementCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final unlocked = achievement.unlocked;
-    final accent = unlocked ? achievement.color : const Color(0xFF3A4456);
+    final accent = unlocked ? achievement.color : const RouticaTheme.borderStrong;
 
     return Container(
       decoration: BoxDecoration(
-        color: unlocked ? const Color(0xFF1A2332) : const Color(0xFF141C2B),
+        color: unlocked ? const RouticaTheme.surface : const RouticaTheme.surfaceVariant,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: unlocked
               ? achievement.color.withOpacity(0.4)
-              : const Color(0x14FFFFFF),
+              : const RouticaTheme.border,
         ),
         boxShadow: unlocked
             ? [
@@ -235,7 +235,7 @@ class _AchievementCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: unlocked
                       ? achievement.color.withOpacity(0.18)
-                      : const Color(0x1AFFFFFF),
+                      : Colors.white.withOpacity(0.1),
                 ),
                 child: Icon(
                   achievement.icon,
@@ -245,7 +245,7 @@ class _AchievementCard extends StatelessWidget {
               ),
               Icon(
                 unlocked ? Icons.check_circle_rounded : Icons.lock_rounded,
-                color: unlocked ? achievement.color : const Color(0xFF4B5563),
+                color: unlocked ? achievement.color : const RouticaTheme.textDisabled,
                 size: 18,
               ),
             ],
@@ -256,7 +256,7 @@ class _AchievementCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              color: unlocked ? Colors.white : const Color(0xFF94A3B8),
+              color: unlocked ? Colors.white : const RouticaTheme.onSurfaceVariant,
               fontSize: 14,
               fontWeight: FontWeight.w700,
             ),
@@ -268,7 +268,7 @@ class _AchievementCard extends StatelessWidget {
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                color: Color(0xFF6B7280),
+                color: RouticaTheme.textDisabled,
                 fontSize: 11,
                 height: 1.3,
               ),
@@ -297,7 +297,7 @@ class _AchievementCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: achievement.progress,
                 minHeight: 5,
-                backgroundColor: const Color(0x14FFFFFF),
+                backgroundColor: const RouticaTheme.border,
                 valueColor: const AlwaysStoppedAnimation<Color>(
                   RouticaTheme.accent,
                 ),
@@ -307,7 +307,7 @@ class _AchievementCard extends StatelessWidget {
             Text(
               achievement.progressLabel,
               style: const TextStyle(
-                color: Color(0xFF6B7280),
+                color: RouticaTheme.textDisabled,
                 fontSize: 10,
               ),
             ),

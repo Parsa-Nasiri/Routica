@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/routica_theme.dart';
 
 import '../models/habit.dart';
 
@@ -92,14 +93,14 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
         backgroundColor = Color(widget.habit.color);
         break;
       case HabitDayStatus.skipped:
-        backgroundColor = const Color(0xFF6B7280).withOpacity(0.5);
+        backgroundColor = const RouticaTheme.textDisabled.withOpacity(0.5);
         break;
       case HabitDayStatus.none:
       case null:
         if (isToday) {
-          backgroundColor = const Color(0x26FFFFFF);
+          backgroundColor = Colors.white.withOpacity(0.15);
         } else if (isBeforeCreation || !isPast) {
-          backgroundColor = const Color(0x14FFFFFF);
+          backgroundColor = const RouticaTheme.border;
         } else {
           backgroundColor = Color(widget.habit.color).withOpacity(0.2);
         }
@@ -142,9 +143,9 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).bottomSheetTheme.backgroundColor ??
-                  const Color(0xFF1A2332),
+                  const RouticaTheme.surface,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0x14FFFFFF)),
+              border: Border.all(color: const RouticaTheme.border),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
@@ -182,7 +183,7 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
                     ],
                   ),
                 ),
-                const Divider(color: Color(0x14FFFFFF), height: 1),
+                const Divider(color: RouticaTheme.border, height: 1),
                 // Status options
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
@@ -206,7 +207,7 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
                         icon: Icons.skip_next,
                         label: 'Skip',
                         subtitle: 'Intentionally skipped',
-                        color: const Color(0xFF6B7280),
+                        color: const RouticaTheme.textDisabled,
                         isSelected: status == HabitDayStatus.skipped,
                         onTap: () {
                           widget.onDayTap?.call(day.key, HabitDayStatus.skipped);
@@ -219,7 +220,7 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
                         icon: Icons.clear,
                         label: 'Clear',
                         subtitle: 'Remove status',
-                        color: const Color(0xFF6B7280),
+                        color: const RouticaTheme.textDisabled,
                         isSelected: status == HabitDayStatus.none,
                         onTap: () {
                           widget.onDayTap?.call(day.key, HabitDayStatus.none);

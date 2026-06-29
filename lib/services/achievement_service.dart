@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/routica_theme.dart';
 
 import '../models/achievement.dart';
 import '../models/habit.dart';
@@ -165,7 +166,7 @@ class AchievementService {
       title: title,
       description: description,
       icon: icon,
-      color: const Color(0xFF2DD4BF),
+      color: const RouticaTheme.accent,
       category: AchievementCategory.milestones,
       target: target,
       value: value,
@@ -179,7 +180,7 @@ class AchievementService {
       title: title,
       description: description,
       icon: icon,
-      color: const Color(0xFFFB923C),
+      color: const RouticaTheme.warning,
       category: AchievementCategory.streaks,
       target: target,
       value: value,
@@ -193,7 +194,7 @@ class AchievementService {
       title: title,
       description: description,
       icon: icon,
-      color: const Color(0xFF60A5FA),
+      color: const RouticaTheme.infoLight,
       category: AchievementCategory.consistency,
       target: target,
       value: value,
@@ -207,7 +208,7 @@ class AchievementService {
       title: title,
       description: description,
       icon: icon,
-      color: const Color(0xFFC084FC),
+      color: const RouticaTheme.secondary,
       category: AchievementCategory.collection,
       target: target,
       value: value,

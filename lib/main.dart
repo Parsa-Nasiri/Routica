@@ -51,7 +51,7 @@ class RouticaApp extends StatelessWidget {
           surfaceContainerHighest: RouticaTheme.surface,
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF0B1220),
+          backgroundColor: RouticaTheme.appBar,
           foregroundColor: Colors.white,
           elevation: 0,
         ),
@@ -109,7 +109,7 @@ class RouticaApp extends StatelessWidget {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(RouticaTheme.radiusCard),
-            borderSide: const BorderSide(color: Color(0xFF273244)),
+            borderSide: const BorderSide(color: RouticaTheme.borderStrong),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(RouticaTheme.radiusCard),
