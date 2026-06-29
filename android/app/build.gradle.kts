@@ -66,8 +66,8 @@ android {
 
             // Enable resource shrinking + Proguard for release builds.
             // google_sign_in and supabase need keep rules (see proguard-rules.pro).
-            minifyEnabled = true
-            shrinkResources = true
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
