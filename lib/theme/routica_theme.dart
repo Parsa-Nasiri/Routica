@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 /// Centralized design tokens for consistent Material language.
 ///
-/// The palette is intentionally limited to **3 accent colours** so the
-/// app feels cohesive rather than a rainbow:
+/// The palette is built around **teal** as the brand accent, giving the
+/// app a calm, focused identity that suits a habit-tracking tool:
 ///
-///   • [primary]   — electric blue   (brand identity, main CTAs)
-///   • [secondary]  — purple          (secondary actions, gradients)
-///   • [accent]     — teal             (highlights, active states)
+///   • [primary]   — deep teal    (brand identity, main CTAs)
+///   • [secondary]  — teal         (secondary actions, gradients)
+///   • [accent]     — bright teal  (highlights, active states)
 ///
 /// Every screen and widget should reference these tokens instead of
 /// hardcoding hex values.
@@ -18,10 +18,10 @@ abstract class RouticaTheme {
   static const Color surfaceVariant = Color(0xFF0F1419);
   static const Color appBar = Color(0xFF0B1220);
 
-  // ── Brand colours (the only 3 accents used across the app) ────
-  static const Color primary = Color(0xFF2B2EEE);   // electric blue
-  static const Color secondary = Color(0xFF8B5CF6);  // purple
-  static const Color accent = Color(0xFF2DD4BF);    // teal
+  // ── Brand colours (teal-based for a cohesive identity) ────────
+  static const Color primary = Color(0xFF14B8A6);   // deep teal
+  static const Color secondary = Color(0xFF0D9488);  // darker teal
+  static const Color accent = Color(0xFF2DD4BF);    // bright teal
 
   // ── Text ──────────────────────────────────────────────────────
   static const Color onSurface = Color(0xFFE2E8F0);
@@ -30,7 +30,7 @@ abstract class RouticaTheme {
   static const Color textSecondary = Color(0xFF9AA3B2);
   static const Color textDisabled = Color(0xFF6B7280);
 
-  // ── Semantic colours (derived from the 3 accents) ─────────────
+  // ── Semantic colours ───────────────────────────────────────────
   static const Color success = Color(0xFF10B981);
   static const Color successLight = Color(0xFF4ADE80);
   static const Color warning = Color(0xFFF59E0B);
@@ -59,11 +59,11 @@ abstract class RouticaTheme {
 
   // ── Reusable gradients ────────────────────────────────────────
 
-  /// Brand gradient used on hero sections and progress indicators.
+  /// Brand gradient — teal-to-deep-teal, used on hero sections.
   static const LinearGradient brandGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [secondary, primary],
+    colors: [accent, primary],
   );
 
   /// Subtle surface gradient for cards that need extra depth.
@@ -77,21 +77,22 @@ abstract class RouticaTheme {
   static Color iconBg(Color accent) => accent.withValues(alpha: 0.15);
 
   // ── Habit category accent colours ─────────────────────────────
-  // Mapped to the 3-brand palette to keep the app cohesive.
+  // Each category gets a distinct hue but all are balanced for the
+  // dark theme — no neon blue/purple.
   static const Map<String, Color> categoryColors = {
-    'General': secondary,
+    'General': accent,
     'Health': danger,
     'Fitness': warning,
     'Productivity': primary,
-    'Mindfulness': accent,
-    'Learning': secondary,
+    'Mindfulness': Color(0xFF8B5CF6),
+    'Learning': Color(0xFF3B82F6),
     'Social': Color(0xFFEC4899),
-    'Creativity': Color(0xFFC084FC),
+    'Creativity': Color(0xFFF43F5E),
   };
 
   /// Returns the accent colour for a habit category, falling back to
-  /// [secondary] for unknown categories.
+  /// [accent] for unknown categories.
   static Color colorForCategory(String category) {
-    return categoryColors[category] ?? secondary;
+    return categoryColors[category] ?? accent;
   }
 }

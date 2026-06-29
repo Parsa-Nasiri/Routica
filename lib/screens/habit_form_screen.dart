@@ -511,19 +511,21 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
               final emoji = HabitCategory.iconFor(category);
               return GestureDetector(
                 onTap: () {
+                  HapticFeedback.selectionClick();
                   setState(() {
                     _category = category;
                   });
                 },
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 10,
                   ),
                   decoration: BoxDecoration(
                     color: selected
-                        ? Color(_color).withValues(alpha: 0.2)
+                        ? Color(_color).withValues(alpha: 0.15)
                         : Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
                     border: selected
@@ -539,13 +541,21 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                         category,
                         style: TextStyle(
                           color: selected
-                              ? Colors.white
+                              ? Color(_color)
                               : RouticaTheme.onSurfaceVariant,
                           fontSize: 13,
                           fontWeight:
                               selected ? FontWeight.w600 : FontWeight.w500,
                         ),
                       ),
+                      if (selected) ...[
+                        const SizedBox(width: 6),
+                        Icon(
+                          Icons.check_circle_rounded,
+                          color: Color(_color),
+                          size: 16,
+                        ),
+                      ],
                     ],
                   ),
                 ),

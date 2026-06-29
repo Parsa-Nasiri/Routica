@@ -358,15 +358,13 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: isCompletedToday
+                      ? Colors.white.withValues(alpha: 0.6)
+                      : Colors.white,
                   fontSize: 16,
                   fontWeight: isCompletedToday
-                      ? FontWeight.w600
-                      : FontWeight.w500,
-                  decoration: isCompletedToday
-                      ? TextDecoration.lineThrough
-                      : TextDecoration.none,
-                  decorationColor: Colors.white38,
+                      ? FontWeight.w500
+                      : FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 2),
@@ -422,8 +420,8 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOut,
-        width: 40,
-        height: 40,
+        width: 44,
+        height: 44,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: isCompletedToday
@@ -439,6 +437,15 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
                     : RouticaTheme.borderStrong,
             width: 2,
           ),
+          boxShadow: isCompletedToday
+              ? [
+                  BoxShadow(
+                    color: habitColor.withValues(alpha: 0.4),
+                    blurRadius: 8,
+                    spreadRadius: 0,
+                  ),
+                ]
+              : null,
         ),
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),

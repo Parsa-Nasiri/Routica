@@ -63,6 +63,15 @@ android {
             } else {
                 signingConfigs.getByName("debug")
             }
+
+            // Enable resource shrinking + Proguard for release builds.
+            // google_sign_in and supabase need keep rules (see proguard-rules.pro).
+            minifyEnabled = true
+            shrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

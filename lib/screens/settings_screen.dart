@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/auth_provider.dart';
 import '../providers/habit_repository.dart';
+import '../services/auth_service.dart';
 import '../services/backup_service.dart';
 import '../services/notification_service.dart';
 import '../theme/routica_theme.dart';
@@ -24,6 +26,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _notificationsEnabled = true;
   bool _smartRemindersEnabled = false;
   final int _smartReminderHour = 20; // 8 PM default
+  bool _isGoogleLoading = false;
 
   // ── Clear data ───────────────────────────────────────────────
 
@@ -299,20 +302,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           StaggerFadeIn(index: 0, child: _buildBrandingCard()),
           const SizedBox(height: 16),
 
+          // Account section (sign-in / sign-out)
+          StaggerFadeIn(index: 1, child: _buildAccountSection()),
+          const SizedBox(height: 16),
+
           // Notifications
-          StaggerFadeIn(index: 1, child: _buildNotifications()),
+          StaggerFadeIn(index: 2, child: _buildNotifications()),
           const SizedBox(height: 16),
 
           // Data & Privacy
-          StaggerFadeIn(index: 2, child: _buildDataPrivacy()),
+          StaggerFadeIn(index: 3, child: _buildDataPrivacy()),
           const SizedBox(height: 16),
 
           // About
-          StaggerFadeIn(index: 3, child: _buildAbout()),
+          StaggerFadeIn(index: 4, child: _buildAbout()),
           const SizedBox(height: 16),
 
           // Info note
-          StaggerFadeIn(index: 4, child: _buildInfoNote()),
+          StaggerFadeIn(index: 5, child: _buildInfoNote()),
         ],
       ),
     );
@@ -406,6 +413,302 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  // ── Account section ──────────────────────────────────────────
+
+  Widget _buildAccountSection() {
+    final user = AuthService.instance.currentUser;
+    final isGuest = ref.read(guestModeProvider);
+    final isLoggedIn = user != null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Account'),
+        Container(
+          decoration: BoxDecoration(
+            color: RouticaTheme.surface,
+            borderRadius: BorderRadius.circular(RouticaTheme.radiusCard),
+            border: Border.all(color: RouticaTheme.border),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                if (isLoggedIn) ...[
+                  // Logged in — show user info + sign out
+                  Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: RouticaTheme.iconBg(RouticaTheme.accent),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.person,
+                          color: RouticaTheme.accent,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user.email ?? 'Signed in',
+                              style: const TextStyle(
+                                color: RouticaTheme.textPrimary,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            if (user.appMetadata['provider'] != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: Text(
+                                  'via ${user.appMetadata['provider']}',
+                                  style: const TextStyle(
+                                    color: RouticaTheme.onSurfaceVariant,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton.icon(
+                      onPressed: () async {
+                        await AuthService.instance.signOut();
+                        if (context.mounted) {
+                          ref.read(guestModeProvider.notifier).disable();
+                        }
+                      },
+                      icon: const Icon(Icons.logout, size: 18),
+                      label: const Text('Sign Out'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: RouticaTheme.danger,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                ] else if (isGuest) ...[
+                  // Guest mode — offer sign-in
+                  Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: RouticaTheme.iconBg(RouticaTheme.warning),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.person_off_outlined,
+                          color: RouticaTheme.warning,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Guest Mode',
+                              style: TextStyle(
+                                color: RouticaTheme.textPrimary,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              'Your data is local-only. Sign in to sync.',
+                              style: TextStyle(
+                                color: RouticaTheme.onSurfaceVariant,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  // Google Sign-In button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: Material(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(RouticaTheme.radiusButton),
+                      child: InkWell(
+                        onTap: _isGoogleLoading
+                            ? null
+                            : () async {
+                                setState(() => _isGoogleLoading = true);
+                                final error = await AuthService.instance.signInWithGoogle();
+                                if (mounted) {
+                                  setState(() => _isGoogleLoading = false);
+                                  if (error != null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(error),
+                                        backgroundColor: RouticaTheme.danger,
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                  } else {
+                                    // Disable guest mode on successful sign-in
+                                    ref.read(guestModeProvider.notifier).disable();
+                                  }
+                                }
+                              },
+                        borderRadius: BorderRadius.circular(RouticaTheme.radiusButton),
+                        child: Center(
+                          child: _isGoogleLoading
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    color: Color(0xFF4285F4),
+                                  ),
+                                )
+                              : const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'G',
+                                      style: TextStyle(
+                                        color: Color(0xFF4285F4),
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'Continue with Google',
+                                      style: TextStyle(
+                                        color: Colors.black87,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ] else ...[
+                  // Not logged in, not guest — show both options
+                  Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: RouticaTheme.iconBg(RouticaTheme.accent),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.lock_outline,
+                          color: RouticaTheme.accent,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Text(
+                          'Sign in to sync your habits across devices',
+                          style: TextStyle(
+                            color: RouticaTheme.onSurfaceVariant,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: Material(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(RouticaTheme.radiusButton),
+                      child: InkWell(
+                        onTap: _isGoogleLoading
+                            ? null
+                            : () async {
+                                setState(() => _isGoogleLoading = true);
+                                final error = await AuthService.instance.signInWithGoogle();
+                                if (mounted) {
+                                  setState(() => _isGoogleLoading = false);
+                                  if (error != null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(error),
+                                        backgroundColor: RouticaTheme.danger,
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                        borderRadius: BorderRadius.circular(RouticaTheme.radiusButton),
+                        child: Center(
+                          child: _isGoogleLoading
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    color: Color(0xFF4285F4),
+                                  ),
+                                )
+                              : const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'G',
+                                      style: TextStyle(
+                                        color: Color(0xFF4285F4),
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'Continue with Google',
+                                      style: TextStyle(
+                                        color: Colors.black87,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 

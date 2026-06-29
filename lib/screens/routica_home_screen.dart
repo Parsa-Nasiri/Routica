@@ -519,19 +519,17 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          gradient: selected
-              ? const LinearGradient(
-                  colors: [RouticaTheme.secondary, RouticaTheme.primary],
-                )
-              : null,
-          color: selected ? null : RouticaTheme.surface,
+          color: selected
+              ? RouticaTheme.accent
+              : RouticaTheme.surface,
           borderRadius: BorderRadius.circular(RouticaTheme.radiusPill),
           border: Border.all(
             color: selected
-                ? Colors.transparent
+                ? RouticaTheme.accent
                 : RouticaTheme.borderStrong,
           ),
         ),
@@ -545,7 +543,7 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
               Icon(icon,
                   size: 16,
                   color: selected
-                      ? Colors.white
+                      ? RouticaTheme.scaffoldBackground
                       : RouticaTheme.onSurfaceVariant),
               const SizedBox(width: 6),
             ],
@@ -553,7 +551,7 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
               label,
               style: TextStyle(
                 color: selected
-                    ? Colors.white
+                    ? RouticaTheme.scaffoldBackground
                     : RouticaTheme.onSurfaceVariant,
                 fontSize: 13,
                 fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
@@ -609,6 +607,10 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
   }
 
   /// F11: Applies search query, category filter, archive filter, and sort.
+  ///
+  /// Uses a stable sort by tracking the original index as a tiebreaker,
+  /// so habits with the same sort key don't jump around when one is
+  /// toggled.
   List<Habit> _applyFiltersAndSort(List<Habit> habits) {
     var result = habits.where((h) {
       // Archive filter: show archived habits only when toggled
@@ -632,30 +634,44 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
       return true;
     }).toList();
 
-    // Sort
+    // Sort with stable tiebreaker (original index) so habits with the
+    // same sort key stay in their original position — no jumping when
+    // a habit is toggled.
+    final indexed = result.asMap().entries.toList();
+
     switch (_sortMode) {
       case _SortMode.alphabetical:
-        result.sort((a, b) => a.title.compareTo(b.title));
+        indexed.sort((a, b) {
+          final cmp = a.value.title.compareTo(b.value.title);
+          return cmp != 0 ? cmp : a.key.compareTo(b.key);
+        });
         break;
       case _SortMode.streak:
-        result.sort((a, b) {
-          final sa = HabitManager.analyzeHabit(a).currentStreak;
-          final sb = HabitManager.analyzeHabit(b).currentStreak;
-          return sb.compareTo(sa); // highest first
+        indexed.sort((a, b) {
+          final sa = HabitManager.analyzeHabit(a.value).currentStreak;
+          final sb = HabitManager.analyzeHabit(b.value).currentStreak;
+          final cmp = sb.compareTo(sa); // highest first
+          return cmp != 0 ? cmp : a.key.compareTo(b.key);
         });
         break;
       case _SortMode.creation:
-        result.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        // Already in creation order (newest first) — keep stable.
+        indexed.sort((a, b) {
+          final cmp = b.value.createdAt.compareTo(a.value.createdAt);
+          return cmp != 0 ? cmp : a.key.compareTo(b.key);
+        });
         break;
       case _SortMode.completion:
-        result.sort((a, b) {
-          final ra = HabitManager.calculateGoalProgress(a).percentage;
-          final rb = HabitManager.calculateGoalProgress(b).percentage;
-          return rb.compareTo(ra); // highest first
+        indexed.sort((a, b) {
+          final ra = HabitManager.calculateGoalProgress(a.value).percentage;
+          final rb = HabitManager.calculateGoalProgress(b.value).percentage;
+          final cmp = rb.compareTo(ra); // highest first
+          return cmp != 0 ? cmp : a.key.compareTo(b.key);
         });
         break;
     }
 
+    result = indexed.map((e) => e.value).toList();
     return result;
   }
 
