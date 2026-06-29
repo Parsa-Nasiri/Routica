@@ -105,6 +105,10 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
           child: _buildCurrentView(),
         ),
       ),
+      // BottomAppBar is REQUIRED for FloatingActionButtonLocation.centerDocked
+      // to work correctly: it provides the notch the FAB docks into. The
+      // previous code used a plain Container, which let the FAB overlap the
+      // nav row and swallow taps on the centre gap and adjacent destinations.
       bottomNavigationBar: _buildNavigationBar(),
       floatingActionButton: _buildAddFAB(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -126,23 +130,28 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
   }
 
   Widget _buildNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: RouticaTheme.surface.withOpacity(0.98),
-        border: Border(
-          top: BorderSide(color: Colors.white.withOpacity(0.08)),
-        ),
-      ),
+    // A BottomAppBar with a CircularNotchedRectangle is the correct partner
+    // for FloatingActionButtonLocation.centerDocked. The notch carves out
+    // space in the centre so the FAB sits *in* the bar instead of *on top
+    // of* the nav destinations. This is what fixes the "buttons not working"
+    // symptom: the FAB no longer overlaps/eats the taps on the centre gap.
+    return BottomAppBar(
+      elevation: 0,
+      padding: EdgeInsets.zero,
+      color: RouticaTheme.surface.withOpacity(0.98),
+      shape: const CircularNotchedRectangle(),
       child: SafeArea(
         top: false,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildNavDestination('habits', Icons.home_outlined, Icons.home_rounded, 'Home'),
               _buildNavDestination('analytics', Icons.query_stats_outlined, Icons.query_stats_rounded, 'Analytics'),
-              const SizedBox(width: 56),
+              // Centre gap is filled by the FAB notch; using Expanded spacers
+              // (instead of a fixed SizedBox + spaceAround) avoids the
+              // contradictory mixed-flex layout that could mis-size the row.
+              const Expanded(child: SizedBox.shrink()),
               _buildNavDestination('achievements', Icons.emoji_events_outlined, Icons.emoji_events_rounded, 'Awards'),
               _buildNavDestination('settings', Icons.settings_outlined, Icons.settings_rounded, 'Settings'),
             ],
