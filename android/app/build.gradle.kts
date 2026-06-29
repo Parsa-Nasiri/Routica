@@ -19,7 +19,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.routica.habit"
-    compileSdk = 35
+    compileSdk = 36
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true

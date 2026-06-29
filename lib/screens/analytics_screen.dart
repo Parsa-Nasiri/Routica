@@ -588,10 +588,7 @@ class AnalyticsScreen extends StatelessWidget {
           // Heatmap
           const SizedBox(height: 12),
           PixelHeatmap(
-            history: habit.history,
-            color: Color(habit.color),
-            cellSize: 14,
-            cellSpacing: 3,
+            habit: habit,
           ),
         ],
       ),

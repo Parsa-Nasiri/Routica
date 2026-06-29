@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import '../models/habit.dart';
+import '../providers/habit_manager.dart';
 import '../utils/logger.dart';
 
 /// Handles backup (JSON + CSV export) and restore (JSON import).
