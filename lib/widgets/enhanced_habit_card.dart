@@ -315,7 +315,6 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
                 ),
               ),
             ),
-          ),
     );
   }
 
@@ -524,9 +523,9 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
     }
 
     // Best streak
-    if (_analytics.bestStreak > 0 && _analytics.bestStreak != currentStreak) {
+    if (_analytics.longestStreak > 0 && _analytics.longestStreak != currentStreak) {
       items.add(_buildStatItem(
-        '🏆 ${_analytics.bestStreak}',
+        '🏆 ${_analytics.longestStreak}',
         'best',
         RouticaTheme.onSurfaceVariant,
       ));

@@ -36,12 +36,6 @@ final currentUserProvider = Provider<User?>((ref) {
 /// Whether the user chose to continue as a guest (no login).
 ///
 /// Stored in Hive so it persists across app restarts.
-final isGuestProvider = StateProvider<bool>((ref) {
-  final box = Hive.box('app_settings');
-  return box.get('is_guest', defaultValue: false) as bool;
-});
-
-/// Provider to toggle guest mode.
 final guestModeProvider = NotifierProvider<GuestModeNotifier, bool>(
   GuestModeNotifier.new,
 );
@@ -67,12 +61,6 @@ class GuestModeNotifier extends Notifier<bool> {
 }
 
 /// Whether onboarding has been completed.
-final onboardingCompleteProvider = StateProvider<bool>((ref) {
-  final box = Hive.box('app_settings');
-  return box.get('onboarding_complete', defaultValue: false) as bool;
-});
-
-/// Provider to mark onboarding as complete.
 final onboardingNotifier = NotifierProvider<OnboardingNotifier, bool>(
   OnboardingNotifier.new,
 );
