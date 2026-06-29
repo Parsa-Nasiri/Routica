@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import '../models/habit.dart';
 import '../widgets/pixel_heatmap.dart';
 import '../providers/habit_manager.dart';
+import '../theme/routica_theme.dart';
+import '../utils/habit_icons.dart';
 
 class EnhancedHabitCard extends StatefulWidget {
   final Habit habit;
@@ -10,6 +12,7 @@ class EnhancedHabitCard extends StatefulWidget {
   final VoidCallback onEdit;
   final Function(String dateKey, HabitDayStatus status) onUpdateDay;
   final VoidCallback? onToggleToday;
+  final VoidCallback? onLongPress;
 
   const EnhancedHabitCard({
     super.key,
@@ -18,6 +21,7 @@ class EnhancedHabitCard extends StatefulWidget {
     required this.onEdit,
     required this.onUpdateDay,
     this.onToggleToday,
+    this.onLongPress,
   });
 
   @override
@@ -73,9 +77,9 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).bottomSheetTheme.backgroundColor ??
-                  const Color(0xFF1A2332),
+                  RouticaTheme.surface,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0x14FFFFFF)),
+              border: Border.all(color: RouticaTheme.border),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
@@ -113,7 +117,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
                     ],
                   ),
                 ),
-                const Divider(color: Color(0x14FFFFFF), height: 1),
+                const Divider(color: RouticaTheme.border, height: 1),
                 // Menu items
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -122,10 +126,10 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
                       // Edit option
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFF3B82F6).withOpacity(0.1),
+                          color: RouticaTheme.info.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: const Color(0xFF3B82F6).withOpacity(0.2),
+                            color: RouticaTheme.info.withOpacity(0.2),
                           ),
                         ),
                         child: Material(
@@ -147,12 +151,12 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
                                     width: 40,
                                     height: 40,
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFF3B82F6).withOpacity(0.2),
+                                      color: RouticaTheme.info.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: const Icon(
                                       Icons.edit,
-                                      color: Color(0xFF3B82F6),
+                                      color: RouticaTheme.info,
                                       size: 20,
                                     ),
                                   ),
@@ -195,10 +199,10 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
                       // Delete option
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEF4444).withOpacity(0.1),
+                          color: RouticaTheme.danger.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: const Color(0xFFEF4444).withOpacity(0.2),
+                            color: RouticaTheme.danger.withOpacity(0.2),
                           ),
                         ),
                         child: Material(
@@ -220,12 +224,12 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
                                     width: 40,
                                     height: 40,
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFEF4444).withOpacity(0.2),
+                                      color: RouticaTheme.danger.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: const Icon(
                                       Icons.delete_outline,
-                                      color: Color(0xFFEF4444),
+                                      color: RouticaTheme.danger,
                                       size: 20,
                                     ),
                                   ),
@@ -237,7 +241,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
                                         const Text(
                                           'Delete Habit',
                                           style: TextStyle(
-                                            color: Color(0xFFEF4444),
+                                            color: RouticaTheme.danger,
                                             fontSize: 15,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -276,123 +280,16 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
     );
   }
 
-  IconData _getIconForId(String id) {
-    switch (id) {
-      case 'brain':
-        return Icons.lightbulb_outline;
-      case 'dumbbell':
-        return Icons.fitness_center;
-      case 'book':
-        return Icons.book;
-      case 'droplet':
-        return Icons.water;
-      case 'code':
-        return Icons.code;
-      case 'heart':
-        return Icons.favorite;
-      case 'coffee':
-        return Icons.local_cafe;
-      case 'music':
-        return Icons.music_note;
-      case 'bike':
-        return Icons.directions_bike;
-      case 'camera':
-        return Icons.camera;
-      case 'palette':
-        return Icons.palette;
-      case 'flame':
-        return Icons.local_fire_department;
-      case 'moon':
-        return Icons.dark_mode;
-      case 'sun':
-        return Icons.light_mode;
-      case 'zap':
-        return Icons.bolt;
-      case 'target':
-        return Icons.location_on;
-      case 'pencil':
-        return Icons.edit;
-      case 'smile':
-        return Icons.sentiment_satisfied;
-      case 'star':
-        return Icons.star;
-      case 'trending':
-        return Icons.trending_up;
-      case 'award':
-        return Icons.emoji_events;
-      case 'clock':
-        return Icons.schedule;
-      case 'check':
-        return Icons.check;
-      case 'activity':
-        return Icons.directions_run;
-      case 'briefcase':
-        return Icons.work;
-      case 'gift':
-        return Icons.card_giftcard;
-      case 'home':
-        return Icons.home;
-      case 'leaf':
-        return Icons.eco;
-      case 'mountain':
-        return Icons.terrain;
-      case 'sparkles':
-        return Icons.star;
-      case 'users':
-        return Icons.people;
-      case 'wind':
-        return Icons.cloud;
-      case 'apple':
-        return Icons.apple;
-      case 'cookie':
-        return Icons.fastfood;
-      case 'pizza':
-        return Icons.local_pizza;
-      case 'sandwich':
-        return Icons.lunch_dining;
-      case 'salad':
-        return Icons.restaurant;
-      case 'soup':
-        return Icons.restaurant;
-      case 'water':
-        return Icons.water_drop;
-      case 'graduation':
-        return Icons.school;
-      case 'game':
-        return Icons.sports_esports;
-      case 'plant':
-        return Icons.nature;
-      case 'utensils':
-        return Icons.dinner_dining;
-      case 'schedule':
-        return Icons.event_note;
-      case 'calendar':
-        return Icons.calendar_today;
-      case 'hourglass':
-        return Icons.hourglass_empty;
-      case 'handshake':
-        return Icons.handshake;
-      case 'family':
-        return Icons.family_restroom;
-      case 'social':
-        return Icons.group;
-      case 'globe':
-        return Icons.public;
-      case 'light':
-        return Icons.lightbulb;
-      default:
-        return Icons.lightbulb_outline;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final today = DateTime.now().toIso8601String().split('T').first;
     final todayEntry = widget.habit.history[today];
     final isCompletedToday = todayEntry?.status == HabitDayStatus.completed;
     final todayCount = todayEntry?.count ?? 0;
-    final isMultiCount = widget.habit.frequencyPeriod == HabitFrequencyPeriod.day && 
-                         widget.habit.frequencyGoal > 1;
+    final hasNoteToday =
+        todayEntry?.note != null && todayEntry!.note!.isNotEmpty;
+    final isMultiCount = widget.habit.frequencyPeriod == HabitFrequencyPeriod.day &&
+        widget.habit.frequencyGoal > 1;
 
     return RepaintBoundary(
       child: MouseRegion(
@@ -400,40 +297,61 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
         onExit: (_) => _scaleController.reverse(),
         child: ScaleTransition(
           scale: _scaleAnimation,
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF1A2332),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: const Color(0x14FFFFFF),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Color(widget.habit.color).withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
+          child: GestureDetector(
+            // F10 — Tap card body to toggle today's completion.
+            onTap: widget.onToggleToday == null
+                ? null
+                : () {
+                    HapticFeedback.lightImpact();
+                    widget.onToggleToday!();
+                  },
+            // F21 — Long-press to skip today.
+            onLongPress: widget.onLongPress == null
+                ? null
+                : () {
+                    HapticFeedback.heavyImpact();
+                    widget.onLongPress!();
+                  },
+            child: Container(
+              decoration: BoxDecoration(
+                color: RouticaTheme.surface,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: RouticaTheme.border,
+                  width: 1,
                 ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(24),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildHeader(isCompletedToday, todayCount, isMultiCount),
-                    if (widget.habit.description.isNotEmpty) ...[
-                      const SizedBox(height: 6),
-                      _buildDescription(),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(widget.habit.color).withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildHeader(
+                        isCompletedToday,
+                        todayCount,
+                        isMultiCount,
+                        hasNoteToday,
+                      ),
+                      if (widget.habit.description.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        _buildDescription(),
+                      ],
+                      const SizedBox(height: 8),
+                      _buildGoalProgress(),
+                      const SizedBox(height: 10),
+                      _buildHeatmap(),
                     ],
-                    const SizedBox(height: 8),
-                    _buildGoalProgress(),
-                    const SizedBox(height: 10),
-                    _buildHeatmap(),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -443,9 +361,14 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
     );
   }
 
-  Widget _buildHeader(bool isCompletedToday, int todayCount, bool isMultiCount) {
+  Widget _buildHeader(
+    bool isCompletedToday,
+    int todayCount,
+    bool isMultiCount,
+    bool hasNoteToday,
+  ) {
     final currentStreak = _analytics.currentStreak;
-    
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -460,7 +383,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  _getIconForId(widget.habit.iconId),
+                  HabitIcons.iconForId(widget.habit.iconId),
                   color: Color.lerp(Color(widget.habit.color), Colors.white, 0.3),
                   size: 26,
                 ),
@@ -512,6 +435,22 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
                                   fontSize: 12,
                                 ),
                               ),
+                              // F2 — Note indicator for today's entry.
+                              if (hasNoteToday) ...[
+                                const SizedBox(width: 4),
+                                const Text(
+                                  '📝',
+                                  style: TextStyle(fontSize: 11),
+                                ),
+                              ],
+                              // F1 — Streak freeze indicator.
+                              if (_analytics.freezeUsed) ...[
+                                const SizedBox(width: 4),
+                                const Text(
+                                  '❄️',
+                                  style: TextStyle(fontSize: 11),
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -519,7 +458,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
                         Text(
                           '${widget.habit.frequencyGoal}/${widget.habit.frequencyPeriod.toString().split('.').last}',
                           style: const TextStyle(
-                            color: Color(0xFF9AA3B2),
+                            color: RouticaTheme.onSurfaceVariant,
                             fontSize: 12,
                           ),
                         ),
@@ -534,7 +473,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
         Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.more_vert, color: Color(0xFF9AA3B2)),
+              icon: const Icon(Icons.more_vert, color: RouticaTheme.onSurfaceVariant),
               onPressed: _showMenu,
               splashRadius: 24,
             ),
@@ -544,9 +483,15 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
+                  // F20 — Haptic feedback on all interactions.
+                  // mediumImpact when completing, lightImpact when un-completing.
                   onTap: () {
-                    HapticFeedback.lightImpact();
-                    if (widget.onToggleToday != null) widget.onToggleToday!();
+                    if (!isCompletedToday) {
+                      HapticFeedback.mediumImpact();
+                    } else {
+                      HapticFeedback.lightImpact();
+                    }
+                    widget.onToggleToday?.call();
                   },
                   borderRadius: BorderRadius.circular(12),
                   child: AnimatedContainer(
@@ -565,7 +510,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
                             ? Colors.transparent
                             : isMultiCount && todayCount > 0
                                 ? Color(widget.habit.color).withOpacity(0.5)
-                                : const Color(0x33FFFFFF),
+                                : RouticaTheme.surfaceVariant,
                         width: 2,
                       ),
                       boxShadow: null,
@@ -597,7 +542,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
                                   style: TextStyle(
                                     color: todayCount > 0
                                         ? Colors.white
-                                        : const Color(0xFF9AA3B2),
+                                        : RouticaTheme.onSurfaceVariant,
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -627,7 +572,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
       style: const TextStyle(
-        color: Color(0xFF9AA3B2),
+        color: RouticaTheme.onSurfaceVariant,
         fontSize: 14,
       ),
     );
@@ -636,7 +581,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
   Widget _buildGoalProgress() {
     final progress = _goalProgress;
     final periodName = widget.habit.frequencyPeriod.toString().split('.').last;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -646,7 +591,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
             Text(
               '${progress.current}/${progress.goal} this $periodName',
               style: TextStyle(
-                color: progress.achieved ? Color(widget.habit.color) : const Color(0xFF9AA3B2),
+                color: progress.achieved ? Color(widget.habit.color) : RouticaTheme.onSurfaceVariant,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
@@ -654,7 +599,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
             Text(
               '${progress.percentage.toInt()}%',
               style: TextStyle(
-                color: progress.achieved ? Color(widget.habit.color) : const Color(0xFF9AA3B2),
+                color: progress.achieved ? Color(widget.habit.color) : RouticaTheme.onSurfaceVariant,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
@@ -671,9 +616,9 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
             child: LinearProgressIndicator(
               value: progress.percentage / 100,
               minHeight: 8,
-              backgroundColor: const Color(0x28FFFFFF),
+              backgroundColor: RouticaTheme.surfaceVariant,
               valueColor: AlwaysStoppedAnimation<Color>(
-                progress.achieved 
+                progress.achieved
                   ? Color(widget.habit.color)
                   : Color(widget.habit.color).withOpacity(0.8),
               ),
@@ -690,6 +635,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
       child: PixelHeatmap(
         habit: widget.habit,
         onDayTap: (date, status) {
+          // F20 — Haptic feedback when toggling day status in heatmap.
           HapticFeedback.selectionClick();
           widget.onUpdateDay(date, status);
         },

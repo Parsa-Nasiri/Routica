@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../models/habit.dart';
+import '../utils/habit_icons.dart';
+import '../utils/logger.dart';
 
 class HabitFormResult {
   HabitFormResult({
@@ -26,10 +28,13 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
   late TextEditingController _frequencyGoalController;
+  late TextEditingController _hexController;
   late int _frequencyGoal;
   late HabitFrequencyPeriod _frequencyPeriod;
   late String _iconId;
   late int _color;
+  late String _category;
+  late bool _archived;
   TimeOfDay? _reminderTime;
   late List<String> _reminderDays;
   late bool _remindersEnabled;
@@ -46,6 +51,18 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
 
     _iconId = widget.existing?.iconId ?? 'brain';
     _color = widget.existing?.color ?? 0xFF8B5CF6;
+    _category = widget.existing?.category ?? HabitCategory.general;
+    _archived = widget.existing?.archived ?? false;
+
+    // Bug 1 fix: _hexController is created ONCE here in initState() and
+    // disposed in dispose(). Previously it was recreated in
+    // didChangeDependencies() (which runs on every dependency change),
+    // leaking the previous controller each time. We now only ever update
+    // its .text inside a setState() when the color changes — never
+    // recreate the controller.
+    _hexController = TextEditingController(
+      text: '#${_color.toRadixString(16).substring(2).toUpperCase()}',
+    );
 
     if (widget.existing != null && widget.existing!.reminders.isNotEmpty) {
       final first = widget.existing!.reminders.first;
@@ -68,12 +85,16 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
     _titleController.dispose();
     _descriptionController.dispose();
     _frequencyGoalController.dispose();
+    _hexController.dispose();
     super.dispose();
   }
 
   void _save() {
     final title = _titleController.text.trim();
-    if (title.isEmpty) return;
+    if (title.isEmpty) {
+      Log.w('Save aborted: habit title is empty.');
+      return;
+    }
 
     final existing = widget.existing;
     final now = DateTime.now();
@@ -90,18 +111,43 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
       );
     }
 
-    final habit = Habit(
-      id: existing?.id ?? now.millisecondsSinceEpoch.toString(),
-      title: title,
-      description: _descriptionController.text.trim(),
-      iconId: _iconId,
-      color: _color,
-      frequencyGoal: _frequencyGoal,
-      frequencyPeriod: _frequencyPeriod,
-      history: existing?.history ?? <String, HabitHistoryEntry>{},
-      createdAt: existing?.createdAt ?? now,
-      reminders: reminders,
-    );
+    final Habit habit;
+    if (existing != null) {
+      // Editing: use copyWith() so we never silently drop fields such as
+      // history, createdAt, id, or streakFreezesAvailable that the old
+      // manual reconstruction was prone to forgetting.
+      habit = existing.copyWith(
+        title: title,
+        description: _descriptionController.text.trim(),
+        iconId: _iconId,
+        color: _color,
+        frequencyGoal: _frequencyGoal,
+        frequencyPeriod: _frequencyPeriod,
+        reminders: reminders,
+        category: _category,
+        archived: _archived,
+      );
+      Log.d('Edited habit ${existing.id}: "$title" '
+          '(category=$_category, archived=$_archived)');
+    } else {
+      // Creating new: pass the new category + archived fields through to
+      // the Habit constructor.
+      habit = Habit(
+        id: now.millisecondsSinceEpoch.toString(),
+        title: title,
+        description: _descriptionController.text.trim(),
+        iconId: _iconId,
+        color: _color,
+        frequencyGoal: _frequencyGoal,
+        frequencyPeriod: _frequencyPeriod,
+        history: <String, HabitHistoryEntry>{},
+        createdAt: now,
+        reminders: reminders,
+        category: _category,
+        archived: _archived,
+      );
+      Log.d('Created new habit "$title" (category=$_category)');
+    }
 
     Navigator.of(context).pop(HabitFormResult(habit: habit));
   }
@@ -135,11 +181,19 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
             const SizedBox(height: 16),
             _buildIconPicker(),
             const SizedBox(height: 16),
+            // F5: Category picker, between icon and color pickers.
+            _buildCategoryPicker(),
+            const SizedBox(height: 16),
             _buildColorPicker(),
             const SizedBox(height: 16),
             _buildFrequency(),
             const SizedBox(height: 16),
             _buildReminder(),
+            // F6: Archive toggle, only when editing an existing habit.
+            if (isEditing) ...[
+              const SizedBox(height: 16),
+              _buildArchiveToggle(),
+            ],
             const SizedBox(height: 20),
             _buildPreviewCard(),
           ],
@@ -150,7 +204,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
 
   Widget _buildNameAndDescription() {
     final titleEmpty = _titleController.text.trim().isEmpty;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -226,154 +280,10 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
     );
   }
 
-  // All 50+ icons organized in groups
-  static const Map<String, List<String>> _iconGroups = {
-    'Health & Fitness': [
-      'dumbbell', 'bike', 'heart', 'activity', 'apple', 'water',
-    ],
-    'Learning & Work': [
-      'brain', 'book', 'code', 'briefcase', 'pencil', 'graduation',
-    ],
-    'Lifestyle': [
-      'coffee', 'music', 'home', 'palette', 'camera', 'game',
-    ],
-    'Nature & Environment': [
-      'leaf', 'mountain', 'wind', 'sun', 'moon', 'plant',
-    ],
-    'Food & Nutrition': [
-      'pizza', 'salad', 'soup', 'sandwich', 'utensils', 'cookie',
-    ],
-    'Motivation & Goals': [
-      'star', 'award', 'trending', 'target', 'check', 'sparkles',
-    ],
-    'Time & Schedule': [
-      'clock', 'schedule', 'calendar', 'zap', 'flame', 'hourglass',
-    ],
-    'Social & People': [
-      'users', 'smile', 'handshake', 'family', 'social', 'globe',
-    ],
-  };
-
-  static const _allIconIds = [
-    'dumbbell', 'bike', 'heart', 'activity', 'apple', 'water',
-    'brain', 'book', 'code', 'briefcase', 'pencil', 'graduation',
-    'coffee', 'music', 'home', 'palette', 'camera', 'game',
-    'leaf', 'mountain', 'wind', 'sun', 'moon', 'plant',
-    'pizza', 'salad', 'soup', 'sandwich', 'utensils', 'cookie',
-    'star', 'award', 'trending', 'target', 'check', 'sparkles',
-    'clock', 'schedule', 'calendar', 'zap', 'flame', 'hourglass',
-    'users', 'smile', 'handshake', 'family', 'social', 'globe',
-    'droplet', 'light',
-  ];
-
-  IconData _iconForId(String id) {
-    switch (id) {
-      case 'brain':
-        return Icons.lightbulb_outline;
-      case 'dumbbell':
-        return Icons.fitness_center;
-      case 'book':
-        return Icons.book;
-      case 'droplet':
-        return Icons.water;
-      case 'code':
-        return Icons.code;
-      case 'heart':
-        return Icons.favorite;
-      case 'coffee':
-        return Icons.local_cafe;
-      case 'music':
-        return Icons.music_note;
-      case 'bike':
-        return Icons.directions_bike;
-      case 'camera':
-        return Icons.camera;
-      case 'palette':
-        return Icons.palette;
-      case 'flame':
-        return Icons.local_fire_department;
-      case 'moon':
-        return Icons.dark_mode;
-      case 'sun':
-        return Icons.light_mode;
-      case 'zap':
-        return Icons.bolt;
-      case 'target':
-        return Icons.location_on;
-      case 'pencil':
-        return Icons.edit;
-      case 'smile':
-        return Icons.sentiment_satisfied;
-      case 'star':
-        return Icons.star;
-      case 'trending':
-        return Icons.trending_up;
-      case 'award':
-        return Icons.emoji_events;
-      case 'clock':
-        return Icons.schedule;
-      case 'check':
-        return Icons.check;
-      case 'activity':
-        return Icons.directions_run;
-      case 'briefcase':
-        return Icons.work;
-      case 'gift':
-        return Icons.card_giftcard;
-      case 'home':
-        return Icons.home;
-      case 'leaf':
-        return Icons.eco;
-      case 'mountain':
-        return Icons.terrain;
-      case 'sparkles':
-        return Icons.star;
-      case 'users':
-        return Icons.people;
-      case 'wind':
-        return Icons.cloud;
-      case 'apple':
-        return Icons.apple;
-      case 'cookie':
-        return Icons.fastfood;
-      case 'pizza':
-        return Icons.local_pizza;
-      case 'sandwich':
-        return Icons.lunch_dining;
-      case 'salad':
-        return Icons.restaurant;
-      case 'soup':
-        return Icons.restaurant;
-      case 'water':
-        return Icons.water_drop;
-      case 'graduation':
-        return Icons.school;
-      case 'game':
-        return Icons.sports_esports;
-      case 'plant':
-        return Icons.nature;
-      case 'utensils':
-        return Icons.dinner_dining;
-      case 'schedule':
-        return Icons.event_note;
-      case 'calendar':
-        return Icons.calendar_today;
-      case 'hourglass':
-        return Icons.hourglass_empty;
-      case 'handshake':
-        return Icons.handshake;
-      case 'family':
-        return Icons.family_restroom;
-      case 'social':
-        return Icons.group;
-      case 'globe':
-        return Icons.public;
-      case 'light':
-        return Icons.lightbulb;
-      default:
-        return Icons.lightbulb_outline;
-    }
-  }
+  // NOTE: The duplicated local _iconGroups / _allIconIds / _iconForId()
+  // switch were removed in favour of the single source of truth in
+  // `HabitIcons` (../utils/habit_icons.dart). Callers now use
+  // HabitIcons.iconForId(id) and HabitIcons.iconGroups directly.
 
   Widget _buildIconPicker() {
     return Column(
@@ -405,7 +315,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(
-                      _iconForId(_iconId),
+                      HabitIcons.iconForId(_iconId),
                       color: Color(_color),
                       size: 28,
                     ),
@@ -494,7 +404,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _iconGroups.entries.map((entry) {
+                    children: HabitIcons.iconGroups.entries.map((entry) {
                       final groupName = entry.key;
                       final icons = entry.value;
                       return Column(
@@ -550,7 +460,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                                           ),
                                   ),
                                   child: Icon(
-                                    _iconForId(id),
+                                    HabitIcons.iconForId(id),
                                     color: selected
                                         ? Color(_color)
                                         : const Color(0xFF9AA3B2),
@@ -574,6 +484,78 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
     );
   }
 
+  // F5 — Category Picker: 8 selectable chips with emoji icons. The
+  // selected chip is highlighted with the habit's accent color.
+  Widget _buildCategoryPicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Category',
+          style: TextStyle(color: Color(0xFF9AA3B2), fontSize: 14),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A2332),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0x14FFFFFF)),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: HabitCategory.all.map((category) {
+              final selected = _category == category;
+              final emoji = HabitCategory.iconFor(category);
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _category = category;
+                  });
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: selected
+                        ? Color(_color).withOpacity(0.2)
+                        : const Color(0x0DFFFFFF),
+                    borderRadius: BorderRadius.circular(12),
+                    border: selected
+                        ? Border.all(color: Color(_color), width: 2)
+                        : Border.all(color: const Color(0x14FFFFFF), width: 1),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(emoji, style: const TextStyle(fontSize: 16)),
+                      const SizedBox(width: 6),
+                      Text(
+                        category,
+                        style: TextStyle(
+                          color: selected
+                              ? Colors.white
+                              : const Color(0xFF9AA3B2),
+                          fontSize: 13,
+                          fontWeight:
+                              selected ? FontWeight.w600 : FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
   // 24 preset colors - organized by hue spectrum with better color selection
   static const _presetColors = [
     // Red & Pink Spectrum
@@ -581,47 +563,37 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
     {'name': 'Rose', 'value': 0xFFF43F5E},
     {'name': 'Pink', 'value': 0xFFEC4899},
     {'name': 'Fuchsia', 'value': 0xFFD946EF},
-    
+
     // Orange & Amber Spectrum
     {'name': 'Orange', 'value': 0xFFF97316},
     {'name': 'Amber', 'value': 0xFFFB923C},
     {'name': 'Yellow', 'value': 0xFFEAB308},
     {'name': 'Lime', 'value': 0xFF84CC16},
-    
+
     // Green Spectrum
     {'name': 'Green', 'value': 0xFF22C55E},
     {'name': 'Emerald', 'value': 0xFF059669},
     {'name': 'Teal', 'value': 0xFF14B8A6},
     {'name': 'Mint', 'value': 0xFF10B981},
-    
+
     // Cyan & Blue Spectrum
     {'name': 'Cyan', 'value': 0xFF06B6D4},
     {'name': 'Sky', 'value': 0xFF0EA5E9},
     {'name': 'Blue', 'value': 0xFF3B82F6},
     {'name': 'Indigo', 'value': 0xFF2B2EEE},
-    
+
     // Purple & Violet Spectrum
     {'name': 'Violet', 'value': 0xFFA855F7},
     {'name': 'Purple', 'value': 0xFF8B5CF6},
     {'name': 'Magenta', 'value': 0xFFD900F0},
     {'name': 'Grape', 'value': 0xFF9D4EDD},
-    
+
     // Neutral Spectrum
     {'name': 'Gray', 'value': 0xFF6B7280},
     {'name': 'Slate', 'value': 0xFF64748B},
     {'name': 'Brown', 'value': 0xFFA16207},
     {'name': 'Charcoal', 'value': 0xFF374151},
   ];
-
-  late TextEditingController _hexController;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _hexController = TextEditingController(
-      text: '#${_color.toRadixString(16).substring(2).toUpperCase()}',
-    );
-  }
 
   Widget _buildColorPicker() {
     return Column(
@@ -700,6 +672,8 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                     onTap: () {
                       setState(() {
                         _color = colorValue;
+                        // Bug 1 fix: only update .text of the existing
+                        // controller — never recreate it.
                         _hexController.text =
                             '#${colorValue.toRadixString(16).substring(2).toUpperCase()}';
                       });
@@ -902,6 +876,18 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                   ],
                 ),
               ),
+              // F3 helper: tip text shown only for daily habits.
+              if (_frequencyPeriod == HabitFrequencyPeriod.day)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(
+                    '💡 Tip: Set goal > 1 for habits you do multiple times (e.g. 8 glasses of water/day)',
+                    style: TextStyle(
+                      color: const Color(0xFF9AA3B2).withOpacity(0.8),
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -1132,6 +1118,75 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
     );
   }
 
+  // F6 — Archive Toggle: shown only when editing an existing habit. Uses
+  // the same animated switch style as the reminders toggle above.
+  Widget _buildArchiveToggle() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    'Archive',
+                    style: TextStyle(color: Color(0xFF9AA3B2), fontSize: 13),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Hide from your main list while keeping the history.',
+                    style: TextStyle(color: Color(0xFF6B7280), fontSize: 11),
+                  ),
+                ],
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _archived = !_archived;
+                });
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                width: 50,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: _archived
+                      ? Color(_color).withOpacity(0.6)
+                      : const Color(0xFF273244),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: _archived
+                        ? Color(_color)
+                        : const Color(0xFF373F4D),
+                    width: 1.5,
+                  ),
+                ),
+                child: AnimatedAlign(
+                  duration: const Duration(milliseconds: 250),
+                  alignment:
+                      _archived ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    margin: const EdgeInsets.all(3),
+                    width: 22,
+                    height: 22,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget _buildPreviewCard() {
     final title = _titleController.text.trim().isEmpty
         ? 'Habit Name'
@@ -1166,7 +1221,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
-                  _iconForId(_iconId),
+                  HabitIcons.iconForId(_iconId),
                   color: Color(_color),
                   size: 28,
                 ),

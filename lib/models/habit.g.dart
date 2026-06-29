@@ -19,7 +19,7 @@ class HabitHistoryEntryAdapter extends TypeAdapter<HabitHistoryEntry> {
     return HabitHistoryEntry(
       status: fields[0] as HabitDayStatus,
       note: fields[1] as String?,
-      count: fields[2] as int,
+      count: fields[2] as int? ?? 1,
     );
   }
 
@@ -104,13 +104,18 @@ class HabitAdapter extends TypeAdapter<Habit> {
       history: (fields[7] as Map).cast<String, HabitHistoryEntry>(),
       createdAt: fields[8] as DateTime,
       reminders: (fields[9] as List).cast<HabitReminder>(),
+      // New fields with defaults for backward compatibility with
+      // existing Hive data written before these fields existed.
+      category: fields[10] as String? ?? 'General',
+      archived: fields[11] as bool? ?? false,
+      streakFreezesAvailable: fields[12] as int? ?? 1,
     );
   }
 
   @override
   void write(BinaryWriter writer, Habit obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -130,7 +135,13 @@ class HabitAdapter extends TypeAdapter<Habit> {
       ..writeByte(8)
       ..write(obj.createdAt)
       ..writeByte(9)
-      ..write(obj.reminders);
+      ..write(obj.reminders)
+      ..writeByte(10)
+      ..write(obj.category)
+      ..writeByte(11)
+      ..write(obj.archived)
+      ..writeByte(12)
+      ..write(obj.streakFreezesAvailable);
   }
 
   @override

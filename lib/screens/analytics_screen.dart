@@ -2,7 +2,19 @@ import 'package:flutter/material.dart';
 
 import '../models/habit.dart';
 import '../providers/habit_manager.dart';
+import '../theme/routica_theme.dart';
+import '../utils/habit_icons.dart';
+import '../widgets/pixel_heatmap.dart';
 
+/// Displays overall analytics, a weekly review summary, per-habit
+/// breakdowns, and AI-generated suggestions.
+///
+/// **Bug S2/S4 fix:** The previous version had `_calculateStats()` and
+/// `_getHabitStats()` which duplicated streak logic from `HabitManager`
+/// — with the same bugs (iterating the sparse history map instead of
+/// walking the calendar, and mutating the same list twice).  Both have
+/// been removed.  All analytics now flow through the single source of
+/// truth: `HabitManager.analyzeAll()` and `HabitManager.analyzeHabit()`.
 class AnalyticsScreen extends StatelessWidget {
   const AnalyticsScreen({
     super.key,
@@ -15,281 +27,333 @@ class AnalyticsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stats = _calculateStats();
+    // F19: Empty state when no habits exist.
+    if (habits.isEmpty) {
+      return _buildEmptyState();
+    }
+
+    final overall = HabitManager.analyzeAll(habits);
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 100),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    if (onBack != null)
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: onBack,
-                      ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      'Analytics & Insights',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildOverallCards(stats),
-                const SizedBox(height: 24),
-                _buildHabitBreakdown(),
-                const SizedBox(height: 24),
-                _buildInsights(stats),
-              ],
-            ),
+        // Header
+        _buildHeader(),
+        const SizedBox(height: 16),
+
+        // Overall stat cards
+        _buildOverallStats(overall),
+        const SizedBox(height: 16),
+
+        // F8: Weekly review summary
+        _buildWeeklyReview(overall),
+        const SizedBox(height: 16),
+
+        // AI-style insights
+        _buildInsights(overall),
+        const SizedBox(height: 16),
+
+        // Per-habit breakdown
+        _buildHabitBreakdowns(),
+        const SizedBox(height: 100),
+      ],
+    );
+  }
+
+  // ── Header ───────────────────────────────────────────────────
+
+  Widget _buildHeader() {
+    return Row(
+      children: [
+        if (onBack != null)
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: RouticaTheme.onSurface),
+            onPressed: onBack,
+          ),
+        const SizedBox(width: 4),
+        const Text(
+          'Analytics',
+          style: TextStyle(
+            color: RouticaTheme.textPrimary,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],
     );
   }
 
-  Map<String, num> _calculateStats() {
-    final today = DateTime.now().toIso8601String().split('T').first;
+  // ── F19: Empty state ─────────────────────────────────────────
 
-    var totalCompleted = 0;
-    var totalDays = 0;
-    var longestStreak = 0;
-
-    for (final habit in habits) {
-      final dates = habit.history.keys.toList()..sort();
-      var habitStreak = 0;
-
-      for (final date in dates) {
-        totalDays++;
-        final status = habit.history[date]?.status;
-        if (status == HabitDayStatus.completed) {
-          totalCompleted++;
-          habitStreak++;
-        } else if (DateTime.parse(date).isBefore(DateTime.parse(today))) {
-          if (habitStreak > longestStreak) {
-            longestStreak = habitStreak;
-          }
-          habitStreak = 0;
-        }
-      }
-
-      if (habitStreak > longestStreak) {
-        longestStreak = habitStreak;
-      }
-    }
-
-    final todayCompleted =
-        habits.where((h) => h.history[today]?.status == HabitDayStatus.completed).length;
-    final todayRate = habits.isNotEmpty
-        ? ((todayCompleted / habits.length) * 100).round()
-        : 0;
-
-    final weekDates = List.generate(7, (i) {
-      final d = DateTime.now().subtract(Duration(days: i));
-      return d.toIso8601String().split('T').first;
-    });
-
-    var weekCompleted = 0;
-    var weekTotal = 0;
-    for (final habit in habits) {
-      for (final date in weekDates) {
-        weekTotal++;
-        if (habit.history[date]?.status == HabitDayStatus.completed) {
-          weekCompleted++;
-        }
-      }
-    }
-
-    final weekRate = weekTotal > 0 ? ((weekCompleted / weekTotal) * 100).round() : 0;
-
-    final completionRate =
-        totalDays > 0 ? ((totalCompleted / totalDays) * 100).round() : 0;
-
-    return {
-      'completionRate': completionRate,
-      'longestStreak': longestStreak,
-      'todayRate': todayRate,
-      'weekRate': weekRate,
-      'totalCompleted': totalCompleted,
-    };
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.insights_outlined,
+            size: 64,
+            color: RouticaTheme.onSurfaceVariant.withOpacity(0.5),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'No analytics yet',
+            style: TextStyle(
+              color: RouticaTheme.onSurface,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Start tracking habits to see insights,\n'
+            'streaks, and weekly reviews here!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: RouticaTheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  Widget _buildOverallCards(Map<String, num> stats) {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisSpacing: 8,
-      mainAxisSpacing: 8,
-      childAspectRatio: 1.5,
+  // ── Overall stats ───────────────────────────────────────────
+
+  Widget _buildOverallStats(OverallAnalytics overall) {
+    return Row(
       children: [
-        _statCard(
-          title: 'Overall',
-          value: '${stats['completionRate']}%',
-          subtitle: 'Completion rate',
-          icon: Icons.trending_up,
-          iconBgColor: const Color(0x333B82F6), // blue-500/20
-          iconColor: const Color(0xFF60A5FA), // blue-400
+        Expanded(
+          child: _statCard(
+            icon: Icons.check_circle_outline,
+            label: 'Completion',
+            value: '${overall.completionRate}%',
+            color: RouticaTheme.success,
+          ),
         ),
-        _statCard(
-          title: 'Best',
-          value: '${stats['longestStreak']}',
-          subtitle: 'Longest streak',
-          icon: Icons.emoji_events,
-          iconBgColor: const Color(0x33F59E0B), // orange-500/20
-          iconColor: const Color(0xFFFB923C), // orange-400
-        ),
-        _statCard(
-          title: 'Today',
-          value: '${stats['todayRate']}%',
-          subtitle: 'Completed',
-          icon: Icons.gps_fixed,
-          iconBgColor: const Color(0x3310B981), // green-500/20
-          iconColor: const Color(0xFF4ADE80), // green-400
-        ),
-        _statCard(
-          title: 'This Week',
-          value: '${stats['weekRate']}%',
-          subtitle: 'Completed',
-          icon: Icons.calendar_today,
-          iconBgColor: const Color(0x33A855F7), // purple-500/20
-          iconColor: const Color(0xFFC084FC), // purple-400
+        const SizedBox(width: 12),
+        Expanded(
+          child: _statCard(
+            icon: Icons.local_fire_department_outlined,
+            label: 'Best Streak',
+            value: '${overall.longestStreak}',
+            color: RouticaTheme.warning,
+          ),
         ),
       ],
     );
   }
 
   Widget _statCard({
-    required String title,
-    required String value,
-    required String subtitle,
     required IconData icon,
-    required Color iconBgColor,
-    required Color iconColor,
+    required String label,
+    required String value,
+    required Color color,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A2332),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0x14FFFFFF)),
-      ),
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: RouticaTheme.surface,
+        borderRadius: BorderRadius.circular(RouticaTheme.radiusCard),
+        border: Border.all(color: RouticaTheme.border),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: iconBgColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, size: 16, color: iconColor),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: const TextStyle(color: Color(0xFF9AA3B2), fontSize: 14),
-              ),
-            ],
-          ),
+          Icon(icon, color: color, size: 24),
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: color,
               fontSize: 24,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           Text(
-            subtitle,
-            style: const TextStyle(color: Color(0xFF9AA3B2), fontSize: 12),
+            label,
+            style: const TextStyle(
+              color: RouticaTheme.onSurfaceVariant,
+              fontSize: 12,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildHabitBreakdown() {
-    if (habits.isEmpty) {
-      return const Center(
-        child: Text(
-          'No habits to analyze yet',
-          style: TextStyle(color: Color(0xFF9AA3B2)),
-        ),
-      );
+  // ── F8: Weekly review summary ────────────────────────────────
+
+  Widget _buildWeeklyReview(OverallAnalytics overall) {
+    final weekRate = overall.weekRate;
+    final todayRate = overall.todayRate;
+
+    // Motivational message based on weekly completion rate
+    String emoji;
+    String message;
+    Color messageColor;
+    if (weekRate >= 80) {
+      emoji = '🔥';
+      message = 'Amazing week! You\'re on fire!';
+      messageColor = RouticaTheme.success;
+    } else if (weekRate >= 50) {
+      emoji = '💪';
+      message = 'Good progress! Keep it up!';
+      messageColor = RouticaTheme.accent;
+    } else if (weekRate >= 25) {
+      emoji = '🎯';
+      message = 'Getting there — stay consistent!';
+      messageColor = RouticaTheme.warning;
+    } else {
+      emoji = '🌱';
+      message = 'Every day is a new chance to grow!';
+      messageColor = RouticaTheme.info;
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Habit Breakdown',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 12),
-        ...habits.map(_buildHabitStatsCard),
-      ],
-    );
-  }
-
-  Widget _buildHabitStatsCard(Habit habit) {
-    final stats = _getHabitStats(habit);
+    final todayCompleted = habits
+        .where((h) =>
+            h.history[_todayKey()]?.status == HabitDayStatus.completed)
+        .length;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A2332),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0x14FFFFFF)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            messageColor.withOpacity(0.15),
+            RouticaTheme.surface,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(RouticaTheme.radiusLarge),
+        border: Border.all(color: messageColor.withOpacity(0.3)),
       ),
-      padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header row
+          Row(
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 28)),
+              const SizedBox(width: 12),
+              const Text(
+                'Weekly Review',
+                style: TextStyle(
+                  color: RouticaTheme.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Big completion rate
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '$weekRate%',
+                style: TextStyle(
+                  color: messageColor,
+                  fontSize: 40,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: const Text(
+                  'this week',
+                  style: TextStyle(
+                    color: RouticaTheme.onSurfaceVariant,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
           Text(
-            habit.title,
-            style: const TextStyle(
-              color: Colors.white,
+            message,
+            style: TextStyle(
+              color: messageColor,
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 20),
+
+          // Mini stats row
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _miniStat('Current Streak', '${stats['currentStreak']} days'),
-              _miniStat('Best Streak', '${stats['longestStreak']} days'),
-              _miniStat('Completed', '${stats['completed']} times'),
-              _miniStat('Success', '${stats['rate']}%'),
+              Expanded(
+                child: _miniStat(
+                  label: 'Today',
+                  value: '$todayCompleted/${habits.length}',
+                  icon: Icons.today_outlined,
+                  color: RouticaTheme.accent,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _miniStat(
+                  label: 'Today Rate',
+                  value: '$todayRate%',
+                  icon: Icons.check_circle_outline,
+                  color: RouticaTheme.success,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _miniStat(
+                  label: 'Best Streak',
+                  value: '${overall.longestStreak}d',
+                  icon: Icons.local_fire_department_outlined,
+                  color: RouticaTheme.warning,
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              value: (stats['rate'] as num) / 100.0,
-              minHeight: 6,
-              backgroundColor: const Color(0x14FFFFFF),
-              valueColor: AlwaysStoppedAnimation<Color>(Color(habit.color)),
+        ],
+      ),
+    );
+  }
+
+  Widget _miniStat({
+    required String label,
+    required String value,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(RouticaTheme.radiusCard),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: TextStyle(
+              color: color,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: const TextStyle(
+              color: RouticaTheme.onSurfaceVariant,
+              fontSize: 11,
             ),
           ),
         ],
@@ -297,104 +361,29 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 
-  Widget _miniStat(String title, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(color: Color(0xFF9AA3B2), fontSize: 10),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          value,
-          style: const TextStyle(color: Colors.white, fontSize: 12),
-        ),
-      ],
-    );
-  }
+  // ── AI-style insights ────────────────────────────────────────
 
-  Map<String, num> _getHabitStats(Habit habit) {
-    final today = DateTime.now().toIso8601String().split('T').first;
-    final dates = habit.history.keys.toList()..sort();
-
-    var completed = 0;
-    var currentStreak = 0;
-    var longestStreak = 0;
-    var tempStreak = 0;
-
-    for (final date in dates) {
-      final status = habit.history[date]?.status;
-      if (status == HabitDayStatus.completed) {
-        completed++;
-        tempStreak++;
-        if (tempStreak > longestStreak) {
-          longestStreak = tempStreak;
-        }
-      } else {
-        if (DateTime.parse(date).isBefore(DateTime.parse(today))) {
-          tempStreak = 0;
-        }
-      }
-    }
-
-    final sortedDates = dates
-      ..sort((a, b) => DateTime.parse(b).compareTo(DateTime.parse(a)));
-    currentStreak = 0;
-    for (final date in sortedDates) {
-      final status = habit.history[date]?.status;
-      if (status == HabitDayStatus.completed) {
-        currentStreak++;
-      } else if (DateTime.parse(date).isBefore(DateTime.parse(today))) {
-        break;
-      }
-    }
-
-    final total = dates.length;
-    final rate = total > 0 ? ((completed / total) * 100).round() : 0;
-
-    return {
-      'completed': completed,
-      'currentStreak': currentStreak,
-      'longestStreak': longestStreak,
-      'rate': rate,
-    };
-  }
-
-  Widget _buildInsights(Map<String, num> stats) {
-    final weekRate = stats['weekRate'] as num;
-    final longestStreak = stats['longestStreak'] as num;
-    final totalCompleted = stats['totalCompleted'] as num;
-    final completionRate = stats['completionRate'] as num;
-    
-    // Generate smart suggestions
-    final suggestions = _generateAISuggestions(weekRate, longestStreak, totalCompleted, completionRate);
+  Widget _buildInsights(OverallAnalytics overall) {
+    final suggestions = _generateSuggestions(habits, overall);
 
     return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A2332),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0x14FFFFFF)),
-      ),
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: RouticaTheme.surface,
+        borderRadius: BorderRadius.circular(RouticaTheme.radiusCard),
+        border: Border.all(color: RouticaTheme.border),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: const Color(0x332B2EEE),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.auto_awesome, color: Color(0xFF2B2EEE), size: 16),
-              ),
+              const Icon(Icons.auto_awesome, color: RouticaTheme.accent, size: 20),
               const SizedBox(width: 8),
               const Text(
-                'AI Suggestions',
+                'Insights',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: RouticaTheme.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -402,186 +391,251 @@ class AnalyticsScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          ...suggestions.map((suggestion) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  suggestion['icon'] as String,
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    suggestion['text'] as String,
-                    style: TextStyle(
-                      color: suggestion['color'] as Color,
-                      fontSize: 13,
-                      height: 1.4,
+          ...suggestions.map((s) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(s.emoji, style: const TextStyle(fontSize: 16)),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        s.text,
+                        style: const TextStyle(
+                          color: RouticaTheme.onSurfaceVariant,
+                          fontSize: 13,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          )),
-          if (suggestions.isEmpty)
-            const Text(
-              'Complete more habits to unlock personalized AI insights',
-              style: TextStyle(color: Color(0xFF9AA3B2), fontSize: 13),
-            ),
+              )),
         ],
       ),
     );
   }
 
-  List<Map<String, dynamic>> _generateAISuggestions(
-    num weekRate,
-    num longestStreak,
-    num totalCompleted,
-    num completionRate,
-  ) {
-    final suggestions = <Map<String, dynamic>>[];
+  List<_Insight> _generateSuggestions(
+      List<Habit> habits, OverallAnalytics overall) {
+    final suggestions = <_Insight>[];
 
-    // No data yet
-    if (totalCompleted == 0) {
-      return [];
-    }
-
-    // 1. PERFORMANCE ANALYSIS (Priority: High)
-    if (weekRate >= 90) {
-      suggestions.add({
-        'icon': '🔥',
-        'text': 'Outstanding! You\'re crushing it with ${weekRate.toInt()}% completion this week. Keep this momentum going!',
-        'color': const Color(0xFF4ADE80),
-      });
-    } else if (weekRate >= 70) {
-      suggestions.add({
-        'icon': '✅',
-        'text': 'Great work! ${weekRate.toInt()}% completion rate. You\'re on the right track to building lasting habits.',
-        'color': const Color(0xFF4ADE80),
-      });
-    } else if (weekRate >= 50) {
-      suggestions.add({
-        'icon': '💡',
-        'text': 'You\'re at ${weekRate.toInt()}%. Try habit stacking: link new habits to existing routines for better consistency.',
-        'color': const Color(0xFF60A5FA),
-      });
-    } else if (weekRate > 0) {
-      suggestions.add({
-        'icon': '⚡',
-        'text': '${weekRate.toInt()}% completion detected. Start with just 1-2 habits and build from there. Small wins create momentum!',
-        'color': const Color(0xFFF97316),
-      });
-    }
-
-    // 2. STREAK RECOGNITION
-    if (longestStreak >= 21) {
-      suggestions.add({
-        'icon': '🏆',
-        'text': 'Incredible ${longestStreak.toInt()}-day streak! Research shows it takes 21+ days to form a habit. You\'ve done it!',
-        'color': const Color(0xFFA855F7),
-      });
-    } else if (longestStreak >= 7) {
-      suggestions.add({
-        'icon': '🎯',
-        'text': '${longestStreak.toInt()} days strong! You\'re halfway to the 21-day habit formation threshold. Don\'t break the chain!',
-        'color': const Color(0xFFA855F7),
-      });
-    } else if (longestStreak >= 3) {
-      suggestions.add({
-        'icon': '🌱',
-        'text': '${longestStreak.toInt()}-day streak started! The first week is the hardest. Keep pushing!',
-        'color': const Color(0xFF60A5FA),
-      });
-    }
-
-    // 3. HABIT LOAD ANALYSIS
-    if (habits.length >= 7) {
-      suggestions.add({
-        'icon': '⚠️',
-        'text': 'Tracking ${habits.length} habits may be overwhelming. Focus on 3-5 core habits for 80% better results.',
-        'color': const Color(0xFFF97316),
-      });
-    } else if (habits.length >= 5) {
-      suggestions.add({
-        'icon': '📊',
-        'text': '${habits.length} active habits. Prioritize the ones that align with your top 3 goals this month.',
-        'color': const Color(0xFF60A5FA),
-      });
-    }
-
-    // 4. COMPLETION MILESTONE
-    if (totalCompleted >= 100) {
-      suggestions.add({
-        'icon': '💯',
-        'text': '${totalCompleted.toInt()} completions! You\'ve built serious discipline. Consider adding a challenge habit.',
-        'color': const Color(0xFF4ADE80),
-      });
-    } else if (totalCompleted >= 50) {
-      suggestions.add({
-        'icon': '📈',
-        'text': '${totalCompleted.toInt()} completions achieved. You\'re proving consistency. Halfway to 100!',
-        'color': const Color(0xFF60A5FA),
-      });
-    } else if (totalCompleted >= 10) {
-      suggestions.add({
-        'icon': '🎊',
-        'text': 'First ${totalCompleted.toInt()} completions recorded! Every journey starts with small steps.',
-        'color': const Color(0xFF60A5FA),
-      });
-    }
-
-    // 5. OVERALL RATE INSIGHT
-    if (completionRate >= 80 && weekRate < 50) {
-      suggestions.add({
-        'icon': '📉',
-        'text': 'Your overall rate (${completionRate.toInt()}%) is strong, but this week dipped to ${weekRate.toInt()}%. Refocus on your why.',
-        'color': const Color(0xFFF97316),
-      });
-    }
-
-    // 6. GOAL PROGRESS ANALYSIS
-    var behindGoals = 0;
-    var achievedGoals = 0;
+    // Streak-based suggestion
+    Habit? bestStreakHabit;
+    var bestStreak = 0;
     for (final habit in habits) {
-      final progress = HabitManager.calculateGoalProgress(habit);
-      if (progress.achieved) {
-        achievedGoals++;
-      } else if (progress.percentage < 50 && progress.goal > 0) {
-        behindGoals++;
+      final analytics = HabitManager.analyzeHabit(habit);
+      if (analytics.currentStreak > bestStreak) {
+        bestStreak = analytics.currentStreak;
+        bestStreakHabit = habit;
       }
     }
-
-    if (behindGoals > 0 && habits.isNotEmpty) {
-      suggestions.add({
-        'icon': '⏰',
-        'text': '$behindGoals habit${behindGoals > 1 ? "s are" : " is"} behind schedule. Focus on completing them before the period ends!',
-        'color': const Color(0xFFF97316),
-      });
-    } else if (achievedGoals > 0 && achievedGoals == habits.length) {
-      suggestions.add({
-        'icon': '🎉',
-        'text': 'Amazing! You\'ve hit ALL your goals this period. Consider increasing your targets!',
-        'color': const Color(0xFF4ADE80),
-      });
-    } else if (achievedGoals >= habits.length / 2 && habits.isNotEmpty) {
-      suggestions.add({
-        'icon': '✨',
-        'text': '$achievedGoals/${habits.length} goals achieved! Keep the momentum going.',
-        'color': const Color(0xFF4ADE80),
-      });
+    if (bestStreak >= 7 && bestStreakHabit != null) {
+      suggestions.add(_Insight(
+        '🔥',
+        '"${bestStreakHabit.title}" is on a $bestStreak-day streak. '
+        'Keep the momentum going!',
+      ));
     }
 
-    // 7. MOTIVATIONAL BOOST (if low activity)
-    if (suggestions.length < 2 && totalCompleted > 0) {
-      suggestions.add({
-        'icon': '💪',
-        'text': 'Every habit completion is a vote for the person you want to become. Keep voting!',
-        'color': const Color(0xFF60A5FA),
-      });
+    // Completion rate suggestion
+    if (overall.completionRate >= 80) {
+      suggestions.add(_Insight(
+        '⭐',
+        'You\'re completing ${overall.completionRate}% of your habits. '
+        'Outstanding consistency!',
+      ));
+    } else if (overall.completionRate < 40 && habits.length > 2) {
+      suggestions.add(_Insight(
+        '💡',
+        'Your completion rate is ${overall.completionRate}%. '
+        'Consider reducing the number of habits or adjusting frequency goals.',
+      ));
     }
 
-    return suggestions.take(3).toList(); // Max 3 suggestions to avoid clutter
+    // Today's progress
+    final todayDone = habits
+        .where((h) =>
+            h.history[_todayKey()]?.status == HabitDayStatus.completed)
+        .length;
+    if (todayDone == habits.length) {
+      suggestions.add(_Insight('🎉', 'All habits completed today! Perfect day!'));
+    } else if (todayDone > 0) {
+      suggestions.add(_Insight(
+        '📌',
+        '$todayDone of ${habits.length} habits completed today. '
+        '${habits.length - todayDone} to go!',
+      ));
+    } else {
+      suggestions.add(_Insight(
+        '🚀',
+        'No habits completed yet today. Pick an easy one to start!',
+      ));
+    }
+
+    // Weekly rate suggestion
+    if (overall.weekRate < overall.completionRate) {
+      suggestions.add(_Insight(
+        '📈',
+        'This week\'s rate (${overall.weekRate}%) is below your overall '
+        'average (${overall.completionRate}%). You can do better!',
+      ));
+    }
+
+    return suggestions;
   }
+
+  // ── Per-habit breakdown ──────────────────────────────────────
+
+  Widget _buildHabitBreakdowns() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Habit Breakdown',
+          style: TextStyle(
+            color: RouticaTheme.onSurfaceVariant,
+            fontSize: 12,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ...habits.map((habit) => _buildHabitRow(habit)),
+      ],
+    );
+  }
+
+  Widget _buildHabitRow(Habit habit) {
+    final analytics = HabitManager.analyzeHabit(habit);
+    final goalProgress = HabitManager.calculateGoalProgress(habit);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: RouticaTheme.surface,
+        borderRadius: BorderRadius.circular(RouticaTheme.radiusCard),
+        border: Border.all(color: RouticaTheme.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title row
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: Color(habit.color).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  _iconForId(habit.iconId),
+                  color: Color(habit.color),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  habit.title,
+                  style: const TextStyle(
+                    color: RouticaTheme.textPrimary,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              if (analytics.freezeUsed)
+                const Padding(
+                  padding: EdgeInsets.only(right: 4),
+                  child: Text('❄️', style: TextStyle(fontSize: 14)),
+                ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Color(habit.color).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(RouticaTheme.radiusPill),
+                ),
+                child: Text(
+                  '🔥 ${analytics.currentStreak}',
+                  style: TextStyle(
+                    color: Color(habit.color),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Stats row
+          Row(
+            children: [
+              _buildMiniStat('Completed', '${analytics.completed}'),
+              const SizedBox(width: 16),
+              _buildMiniStat('Longest', '${analytics.longestStreak}d'),
+              const SizedBox(width: 16),
+              _buildMiniStat('Rate', '${analytics.completionRate.round()}%'),
+              const SizedBox(width: 16),
+              _buildMiniStat(
+                'Goal',
+                '${goalProgress.current}/${goalProgress.goal}',
+              ),
+            ],
+          ),
+
+          // Heatmap
+          const SizedBox(height: 12),
+          PixelHeatmap(
+            history: habit.history,
+            color: Color(habit.color),
+            cellSize: 14,
+            cellSpacing: 3,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMiniStat(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            color: RouticaTheme.textPrimary,
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(
+            color: RouticaTheme.onSurfaceVariant,
+            fontSize: 11,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────
+
+  String _todayKey() {
+    final now = DateTime.now();
+    return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+  }
+
+  IconData _iconForId(String id) {
+    // Use the shared utility — avoids the old duplicated 50-case switch.
+    return HabitIcons.iconForId(id);
+  }
+}
+
+class _Insight {
+  final String emoji;
+  final String text;
+  _Insight(this.emoji, this.text);
 }
