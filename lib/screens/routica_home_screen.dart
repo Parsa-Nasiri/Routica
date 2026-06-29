@@ -47,9 +47,6 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
   String? _filterCategory;
   bool _showArchived = false;
 
-  // ── F18: Onboarding flag
-  bool _showOnboarding = false;
-
   @override
   void initState() {
     super.initState();
@@ -177,27 +174,30 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
       padding: const EdgeInsets.only(left: 8, top: 8, bottom: 16),
       child: Row(
         children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              gradient: RouticaTheme.brandGradient,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.track_changes_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 10),
           const Text(
             'Routica',
             style: TextStyle(
               color: RouticaTheme.textPrimary,
-              fontSize: 28,
+              fontSize: 26,
               fontWeight: FontWeight.w700,
+              letterSpacing: -0.5,
             ),
           ),
           const Spacer(),
-          // F11: Search toggle
-          IconButton(
-            icon: const Icon(Icons.search, color: RouticaTheme.onSurfaceVariant),
-            onPressed: () {
-              HapticFeedback.lightImpact();
-              setState(() {
-                _searchQuery = '';
-                _searchController.clear();
-                _showOnboarding = !_showOnboarding;
-              });
-            },
-          ),
         ],
       ),
     );
@@ -398,77 +398,108 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
   Widget _buildSearchAndFilterBar() {
     return Column(
       children: [
-        // Search field
-        if (_showOnboarding || _searchQuery.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: TextField(
-              controller: _searchController,
-              style: const TextStyle(color: RouticaTheme.textPrimary),
-              decoration: InputDecoration(
-                hintText: 'Search habits...',
-                hintStyle: const TextStyle(color: RouticaTheme.onSurfaceVariant),
-                prefixIcon: const Icon(Icons.search,
-                    color: RouticaTheme.onSurfaceVariant, size: 20),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear,
-                            color: RouticaTheme.onSurfaceVariant, size: 20),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => _searchQuery = '');
-                        },
-                      )
-                    : null,
-                filled: true,
-                fillColor: RouticaTheme.surface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(RouticaTheme.radiusCard),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        // Compact search field — always visible
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: TextField(
+            controller: _searchController,
+            style: const TextStyle(color: RouticaTheme.textPrimary, fontSize: 14),
+            decoration: InputDecoration(
+              hintText: 'Search habits...',
+              hintStyle: const TextStyle(
+                color: RouticaTheme.onSurfaceVariant,
+                fontSize: 14,
               ),
+              prefixIcon: const Icon(Icons.search,
+                  color: RouticaTheme.onSurfaceVariant, size: 20),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear,
+                          color: RouticaTheme.onSurfaceVariant, size: 18),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() => _searchQuery = '');
+                      },
+                    )
+                  : null,
+              filled: true,
+              fillColor: RouticaTheme.surface,
+              isDense: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(RouticaTheme.radiusPill),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(RouticaTheme.radiusPill),
+                borderSide: const BorderSide(color: RouticaTheme.border),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(RouticaTheme.radiusPill),
+                borderSide: const BorderSide(color: RouticaTheme.accent, width: 1.5),
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             ),
           ),
+        ),
 
-        // Filter chips row
+        // Category bar — horizontal pill selector
         SizedBox(
-          height: 40,
+          height: 38,
           child: ListView(
             scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.zero,
             children: [
-              // Sort dropdown
-              _buildSortChip(),
-              const SizedBox(width: 8),
-
-              // Archive toggle
-              _buildFilterChip(
-                label: 'Archived',
-                icon: Icons.archive_outlined,
-                selected: _showArchived,
+              // "All" pill
+              _buildCategoryPill(
+                label: 'All',
+                emoji: null,
+                icon: Icons.apps_rounded,
+                selected: _filterCategory == null && !_showArchived,
                 onTap: () {
                   HapticFeedback.selectionClick();
-                  setState(() => _showArchived = !_showArchived);
+                  setState(() {
+                    _filterCategory = null;
+                    _showArchived = false;
+                  });
                 },
               ),
-              const SizedBox(width: 8),
-
-              // Category filters
+              const SizedBox(width: 6),
+              // Category pills
               ...HabitCategory.all.map((category) {
                 final selected = _filterCategory == category;
-                return _buildFilterChip(
+                return _buildCategoryPill(
                   label: category,
-                  icon: HabitCategory.iconFor(category),
+                  emoji: HabitCategory.iconFor(category),
+                  icon: null,
                   selected: selected,
                   onTap: () {
                     HapticFeedback.selectionClick();
                     setState(() {
                       _filterCategory = selected ? null : category;
+                      _showArchived = false;
                     });
                   },
                 );
               }),
+              const SizedBox(width: 6),
+              // Archived pill
+              _buildCategoryPill(
+                label: 'Archived',
+                emoji: null,
+                icon: Icons.archive_outlined,
+                selected: _showArchived,
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  setState(() {
+                    _showArchived = !_showArchived;
+                    _filterCategory = null;
+                  });
+                },
+              ),
+              const SizedBox(width: 6),
+              // Sort pill
+              _buildSortPill(),
             ],
           ),
         ),
@@ -477,7 +508,71 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
     );
   }
 
-  Widget _buildSortChip() {
+  /// A single category pill with animated selected state.
+  Widget _buildCategoryPill({
+    required String label,
+    String? emoji,
+    IconData? icon,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          gradient: selected
+              ? const LinearGradient(
+                  colors: [RouticaTheme.secondary, RouticaTheme.primary],
+                )
+              : null,
+          color: selected ? null : RouticaTheme.surface,
+          borderRadius: BorderRadius.circular(RouticaTheme.radiusPill),
+          border: Border.all(
+            color: selected
+                ? Colors.transparent
+                : RouticaTheme.borderStrong,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (emoji != null) ...[
+              Text(emoji, style: const TextStyle(fontSize: 14)),
+              const SizedBox(width: 6),
+            ] else if (icon != null) ...[
+              Icon(icon,
+                  size: 16,
+                  color: selected
+                      ? Colors.white
+                      : RouticaTheme.onSurfaceVariant),
+              const SizedBox(width: 6),
+            ],
+            Text(
+              label,
+              style: TextStyle(
+                color: selected
+                    ? Colors.white
+                    : RouticaTheme.onSurfaceVariant,
+                fontSize: 13,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Sort mode pill with icon rotation animation.
+  Widget _buildSortPill() {
+    final icons = {
+      _SortMode.creation: Icons.schedule_rounded,
+      _SortMode.alphabetical: Icons.sort_by_alpha_rounded,
+      _SortMode.streak: Icons.local_fire_department_rounded,
+      _SortMode.completion: Icons.check_circle_outline_rounded,
+    };
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
@@ -487,73 +582,24 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: RouticaTheme.accent.withOpacity(0.15),
+          color: RouticaTheme.accent.withOpacity(0.12),
           borderRadius: BorderRadius.circular(RouticaTheme.radiusPill),
           border: Border.all(color: RouticaTheme.accent.withOpacity(0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.sort, color: RouticaTheme.accent, size: 16),
+            Icon(icons[_sortMode] ?? Icons.sort,
+                color: RouticaTheme.accent, size: 16),
             const SizedBox(width: 6),
             Text(
               _sortMode.name,
               style: const TextStyle(
                 color: RouticaTheme.accent,
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFilterChip({
-    required String label,
-    required dynamic icon,
-    required bool selected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(right: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected
-              ? RouticaTheme.accent.withOpacity(0.2)
-              : RouticaTheme.surface,
-          borderRadius: BorderRadius.circular(RouticaTheme.radiusPill),
-          border: Border.all(
-            color: selected
-                ? RouticaTheme.accent.withOpacity(0.5)
-                : RouticaTheme.border,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon is String)
-              Text(icon, style: const TextStyle(fontSize: 14))
-            else if (icon is IconData)
-              Icon(icon,
-                  size: 16,
-                  color: selected
-                      ? RouticaTheme.accent
-                      : RouticaTheme.onSurfaceVariant),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                color: selected
-                    ? RouticaTheme.accent
-                    : RouticaTheme.onSurfaceVariant,
-                fontSize: 12,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
               ),
             ),
           ],

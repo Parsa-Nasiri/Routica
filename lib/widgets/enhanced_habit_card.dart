@@ -6,6 +6,18 @@ import '../providers/habit_manager.dart';
 import '../theme/routica_theme.dart';
 import '../utils/habit_icons.dart';
 
+/// A polished, performant habit card.
+///
+/// Design decisions:
+///  • No [MouseRegion] / hover scale — mobile-only, saves an animation
+///    controller per card and reduces repaint cost.
+///  • Left accent border lights up when today is completed — instant
+///    visual feedback without animation overhead.
+///  • Icon tile tints toward the habit colour when completed.
+///  • Stats are inline text with dot separators — lighter weight than
+///    badge containers, reads better at small sizes.
+///  • [RepaintBoundary] isolates each card so toggling one habit
+///    doesn't repaint the entire grid.
 class EnhancedHabitCard extends StatefulWidget {
   final Habit habit;
   final VoidCallback onDelete;
@@ -28,10 +40,7 @@ class EnhancedHabitCard extends StatefulWidget {
   State<EnhancedHabitCard> createState() => _EnhancedHabitCardState();
 }
 
-class _EnhancedHabitCardState extends State<EnhancedHabitCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _scaleController;
-  late Animation<double> _scaleAnimation;
+class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
   late HabitAnalytics _analytics;
   late GoalProgress _goalProgress;
 
@@ -40,13 +49,6 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
     super.initState();
     _analytics = HabitManager.analyzeHabit(widget.habit);
     _goalProgress = HabitManager.calculateGoalProgress(widget.habit);
-    _scaleController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
-      CurvedAnimation(parent: _scaleController, curve: Curves.easeOut),
-    );
   }
 
   @override
@@ -59,11 +61,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
     }
   }
 
-  @override
-  void dispose() {
-    _scaleController.dispose();
-    super.dispose();
-  }
+  // ── Menu (bottom sheet) ──────────────────────────────────────
 
   void _showMenu() {
     HapticFeedback.lightImpact();
@@ -80,19 +78,18 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
                   RouticaTheme.surface,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: RouticaTheme.border),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black38,
                   blurRadius: 16,
-                  spreadRadius: 0,
-                  offset: const Offset(0, 8),
+                  offset: Offset(0, 8),
                 ),
               ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Header with grip indicator
+                // Grip handle
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   child: Column(
@@ -118,155 +115,30 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
                   ),
                 ),
                 const Divider(color: RouticaTheme.border, height: 1),
-                // Menu items
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   child: Column(
                     children: [
-                      // Edit option
-                      Container(
-                        decoration: BoxDecoration(
-                          color: RouticaTheme.info.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: RouticaTheme.info.withOpacity(0.2),
-                          ),
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pop(context);
-                              widget.onEdit();
-                            },
-                            borderRadius: BorderRadius.circular(12),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: RouticaTheme.info.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: const Icon(
-                                      Icons.edit,
-                                      color: RouticaTheme.info,
-                                      size: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          'Edit Habit',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          'Modify habit details',
-                                          style: TextStyle(
-                                            color: Colors.white.withOpacity(0.6),
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: Colors.white.withOpacity(0.3),
-                                    size: 16,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                      _buildMenuOption(
+                        icon: Icons.edit_outlined,
+                        label: 'Edit Habit',
+                        subtitle: 'Modify habit details',
+                        color: RouticaTheme.info,
+                        onTap: () {
+                          Navigator.pop(context);
+                          widget.onEdit();
+                        },
                       ),
                       const SizedBox(height: 10),
-                      // Delete option
-                      Container(
-                        decoration: BoxDecoration(
-                          color: RouticaTheme.danger.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: RouticaTheme.danger.withOpacity(0.2),
-                          ),
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pop(context);
-                              widget.onDelete();
-                            },
-                            borderRadius: BorderRadius.circular(12),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: RouticaTheme.danger.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: const Icon(
-                                      Icons.delete_outline,
-                                      color: RouticaTheme.danger,
-                                      size: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          'Delete Habit',
-                                          style: TextStyle(
-                                            color: RouticaTheme.danger,
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          'Remove this habit permanently',
-                                          style: TextStyle(
-                                            color: Colors.white.withOpacity(0.6),
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: Colors.white.withOpacity(0.3),
-                                    size: 16,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                      _buildMenuOption(
+                        icon: Icons.delete_outline,
+                        label: 'Delete Habit',
+                        subtitle: 'Remove this habit permanently',
+                        color: RouticaTheme.danger,
+                        onTap: () {
+                          Navigator.pop(context);
+                          widget.onDelete();
+                        },
                       ),
                     ],
                   ),
@@ -280,6 +152,76 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
     );
   }
 
+  Widget _buildMenuOption({
+    required IconData icon,
+    required String label,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.6),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.white.withOpacity(0.3),
+                  size: 16,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Build ─────────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
     final today = DateTime.now().toIso8601String().split('T').first;
@@ -288,297 +230,355 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
     final todayCount = todayEntry?.count ?? 0;
     final hasNoteToday =
         todayEntry?.note != null && todayEntry!.note!.isNotEmpty;
-    final isMultiCount = widget.habit.frequencyPeriod == HabitFrequencyPeriod.day &&
-        widget.habit.frequencyGoal > 1;
+    final isMultiCount =
+        widget.habit.frequencyPeriod == HabitFrequencyPeriod.day &&
+            widget.habit.frequencyGoal > 1;
+
+    final habitColor = Color(widget.habit.color);
 
     return RepaintBoundary(
-      child: MouseRegion(
-        onEnter: (_) => _scaleController.forward(),
-        onExit: (_) => _scaleController.reverse(),
-        child: ScaleTransition(
-          scale: _scaleAnimation,
-          child: GestureDetector(
-            // F10 — Tap card body to toggle today's completion.
-            onTap: widget.onToggleToday == null
-                ? null
-                : () {
-                    HapticFeedback.lightImpact();
-                    widget.onToggleToday!();
-                  },
-            // F21 — Long-press to skip today.
-            onLongPress: widget.onLongPress == null
-                ? null
-                : () {
-                    HapticFeedback.heavyImpact();
-                    widget.onLongPress!();
-                  },
+      child: GestureDetector(
+        onTap: widget.onToggleToday == null
+            ? null
+            : () {
+                HapticFeedback.lightImpact();
+                widget.onToggleToday!();
+              },
+        onLongPress: widget.onLongPress == null
+            ? null
+            : () {
+                HapticFeedback.heavyImpact();
+                widget.onLongPress!();
+              },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+          decoration: BoxDecoration(
+            color: RouticaTheme.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isCompletedToday
+                  ? habitColor.withOpacity(0.4)
+                  : RouticaTheme.border,
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: habitColor.withOpacity(isCompletedToday ? 0.15 : 0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
             child: Container(
               decoration: BoxDecoration(
-                color: RouticaTheme.surface,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: RouticaTheme.border,
-                  width: 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(widget.habit.color).withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
+                border: Border(
+                  left: BorderSide(
+                    width: 4,
+                    color: isCompletedToday
+                        ? habitColor
+                        : habitColor.withOpacity(0.15),
                   ),
-                ],
+                ),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildHeader(
-                        isCompletedToday,
-                        todayCount,
-                        isMultiCount,
-                        hasNoteToday,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 14, 14, 14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildHeader(
+                            habitColor,
+                            isCompletedToday,
+                            todayCount,
+                            isMultiCount,
+                          ),
+                          if (widget.habit.description.isNotEmpty) ...[
+                            const SizedBox(height: 6),
+                            _buildDescription(),
+                          ],
+                          const SizedBox(height: 10),
+                          _buildStatsRow(
+                            habitColor,
+                            hasNoteToday,
+                          ),
+                          const SizedBox(height: 8),
+                          _buildGoalProgress(habitColor),
+                          const SizedBox(height: 10),
+                          _buildHeatmap(),
+                        ],
                       ),
-                      if (widget.habit.description.isNotEmpty) ...[
-                        const SizedBox(height: 6),
-                        _buildDescription(),
-                      ],
-                      const SizedBox(height: 8),
-                      _buildGoalProgress(),
-                      const SizedBox(height: 10),
-                      _buildHeatmap(),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
     );
   }
 
+  // ── Header ───────────────────────────────────────────────────
+
   Widget _buildHeader(
+    Color habitColor,
     bool isCompletedToday,
     int todayCount,
     bool isMultiCount,
-    bool hasNoteToday,
   ) {
-    final currentStreak = _analytics.currentStreak;
-
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        // Icon tile
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: isCompletedToday
+                ? habitColor.withOpacity(0.35)
+                : habitColor.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            HabitIcons.iconForId(widget.habit.iconId),
+            color: isCompletedToday
+                ? Color.lerp(habitColor, Colors.white, 0.2)
+                : habitColor,
+            size: 24,
+          ),
+        ),
+        const SizedBox(width: 12),
+        // Title + category
         Expanded(
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: Color(widget.habit.color).withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  HabitIcons.iconForId(widget.habit.iconId),
-                  color: Color.lerp(Color(widget.habit.color), Colors.white, 0.3),
-                  size: 26,
+              Text(
+                widget.habit.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: isCompletedToday
+                      ? FontWeight.w600
+                      : FontWeight.w500,
+                  decoration: isCompletedToday
+                      ? TextDecoration.lineThrough
+                      : TextDecoration.none,
+                  decorationColor: Colors.white38,
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      widget.habit.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Color(widget.habit.color).withOpacity(0.09),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (currentStreak > 0)
-                                const Text(
-                                  '🔥',
-                                  style: TextStyle(fontSize: 11),
-                                ),
-                              if (currentStreak > 0)
-                                const SizedBox(width: 4),
-                              Text(
-                                currentStreak > 0
-                                    ? '$currentStreak day${currentStreak != 1 ? 's' : ''}'
-                                    : 'No streak',
-                                style: TextStyle(
-                                  color: Color(widget.habit.color),
-                                  fontSize: 12,
-                                ),
-                              ),
-                              // F2 — Note indicator for today's entry.
-                              if (hasNoteToday) ...[
-                                const SizedBox(width: 4),
-                                const Text(
-                                  '📝',
-                                  style: TextStyle(fontSize: 11),
-                                ),
-                              ],
-                              // F1 — Streak freeze indicator.
-                              if (_analytics.freezeUsed) ...[
-                                const SizedBox(width: 4),
-                                const Text(
-                                  '❄️',
-                                  style: TextStyle(fontSize: 11),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '${widget.habit.frequencyGoal}/${widget.habit.frequencyPeriod.toString().split('.').last}',
-                          style: const TextStyle(
-                            color: RouticaTheme.onSurfaceVariant,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+              const SizedBox(height: 2),
+              Text(
+                widget.habit.category,
+                style: const TextStyle(
+                  color: RouticaTheme.onSurfaceVariant,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],
           ),
         ),
-        Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.more_vert, color: RouticaTheme.onSurfaceVariant),
-              onPressed: _showMenu,
-              splashRadius: 24,
-            ),
-            const SizedBox(width: 4),
-            Transform.scale(
-              scale: isCompletedToday ? 1.05 : 1.0,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  // F20 — Haptic feedback on all interactions.
-                  // mediumImpact when completing, lightImpact when un-completing.
-                  onTap: () {
-                    if (!isCompletedToday) {
-                      HapticFeedback.mediumImpact();
-                    } else {
-                      HapticFeedback.lightImpact();
-                    }
-                    widget.onToggleToday?.call();
-                  },
-                  borderRadius: BorderRadius.circular(12),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: isCompletedToday
-                          ? Color(widget.habit.color)
-                          : isMultiCount && todayCount > 0
-                              ? Color(widget.habit.color).withOpacity(0.3)
-                              : Colors.transparent,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isCompletedToday
-                            ? Colors.transparent
-                            : isMultiCount && todayCount > 0
-                                ? Color(widget.habit.color).withOpacity(0.5)
-                                : RouticaTheme.surfaceVariant,
-                        width: 2,
-                      ),
-                      boxShadow: null,
-                    ),
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      switchInCurve: Curves.easeOut,
-                      switchOutCurve: Curves.easeIn,
-                      transitionBuilder: (child, animation) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: ScaleTransition(
-                            scale: Tween<double>(begin: 0.8, end: 1.0).animate(animation),
-                            child: child,
-                          ),
-                        );
-                      },
-                      child: isMultiCount
-                          ? (isCompletedToday
-                              ? const Icon(
-                                  Icons.check,
-                                  key: ValueKey('check'),
-                                  color: Colors.white,
-                                  size: 24,
-                                )
-                              : Text(
-                                  '$todayCount/${widget.habit.frequencyGoal}',
-                                  key: ValueKey('count_$todayCount'),
-                                  style: TextStyle(
-                                    color: todayCount > 0
-                                        ? Colors.white
-                                        : RouticaTheme.onSurfaceVariant,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ))
-                          : (isCompletedToday
-                              ? const Icon(
-                                  Icons.check,
-                                  key: ValueKey('check_single'),
-                                  color: Colors.white,
-                                  size: 24,
-                                )
-                              : const SizedBox.shrink(key: ValueKey('empty'))),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+        // More menu
+        IconButton(
+          icon: const Icon(Icons.more_vert,
+              color: RouticaTheme.onSurfaceVariant, size: 20),
+          onPressed: _showMenu,
+          splashRadius: 20,
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+        ),
+        const SizedBox(width: 2),
+        // Completion circle
+        _buildCompletionCircle(
+          habitColor,
+          isCompletedToday,
+          todayCount,
+          isMultiCount,
         ),
       ],
     );
   }
 
-  Widget _buildDescription() {
-    return Text(
-      widget.habit.description,
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-      style: const TextStyle(
-        color: RouticaTheme.onSurfaceVariant,
-        fontSize: 14,
+  Widget _buildCompletionCircle(
+    Color habitColor,
+    bool isCompletedToday,
+    int todayCount,
+    bool isMultiCount,
+  ) {
+    return GestureDetector(
+      onTap: widget.onToggleToday == null
+          ? null
+          : () {
+              if (!isCompletedToday) {
+                HapticFeedback.mediumImpact();
+              } else {
+                HapticFeedback.lightImpact();
+              }
+              widget.onToggleToday?.call();
+            },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: isCompletedToday
+              ? habitColor
+              : isMultiCount && todayCount > 0
+                  ? habitColor.withOpacity(0.25)
+                  : Colors.transparent,
+          border: Border.all(
+            color: isCompletedToday
+                ? Colors.transparent
+                : isMultiCount && todayCount > 0
+                    ? habitColor.withOpacity(0.5)
+                    : RouticaTheme.borderStrong,
+            width: 2,
+          ),
+        ),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: isMultiCount
+              ? (isCompletedToday
+                  ? const Icon(Icons.check,
+                      key: ValueKey('check_multi'),
+                      color: Colors.white,
+                      size: 22)
+                  : Text(
+                      '$todayCount/${widget.habit.frequencyGoal}',
+                      key: ValueKey('count_$todayCount'),
+                      style: TextStyle(
+                        color: todayCount > 0
+                            ? Colors.white
+                            : RouticaTheme.onSurfaceVariant,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ))
+              : (isCompletedToday
+                  ? const Icon(Icons.check,
+                      key: ValueKey('check_single'),
+                      color: Colors.white,
+                      size: 22)
+                  : const SizedBox.shrink(key: ValueKey('empty'))),
+        ),
       ),
     );
   }
 
-  Widget _buildGoalProgress() {
+  // ── Description ──────────────────────────────────────────────
+
+  Widget _buildDescription() {
+    return Text(
+      widget.habit.description,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: const TextStyle(
+        color: RouticaTheme.onSurfaceVariant,
+        fontSize: 13,
+      ),
+    );
+  }
+
+  // ── Stats row ────────────────────────────────────────────────
+
+  Widget _buildStatsRow(
+    Color habitColor,
+    bool hasNoteToday,
+  ) {
+    final currentStreak = _analytics.currentStreak;
+    final periodName = widget.habit.frequencyPeriod.toString().split('.').last;
+
+    // Build stat items with dot separators
+    final items = <Widget>[];
+
+    // Streak
+    if (currentStreak > 0) {
+      items.add(_buildStatItem(
+        '🔥 $currentStreak',
+        currentStreak == 1 ? 'day' : 'days',
+        habitColor,
+      ));
+    }
+
+    // Frequency
+    items.add(_buildStatItem(
+      '${widget.habit.frequencyGoal}',
+      periodName,
+      RouticaTheme.onSurfaceVariant,
+    ));
+
+    // Streak freeze
+    if (_analytics.freezeUsed) {
+      items.add(_buildStatItem('❄️', 'frozen', RouticaTheme.onSurfaceVariant));
+    }
+
+    // Note
+    if (hasNoteToday) {
+      items.add(_buildStatItem('📝', 'note', RouticaTheme.onSurfaceVariant));
+    }
+
+    // Best streak
+    if (_analytics.bestStreak > 0 && _analytics.bestStreak != currentStreak) {
+      items.add(_buildStatItem(
+        '🏆 ${_analytics.bestStreak}',
+        'best',
+        RouticaTheme.onSurfaceVariant,
+      ));
+    }
+
+    return Row(
+      children: [
+        for (var i = 0; i < items.length; i++) ...[
+          if (i > 0)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 6),
+              child: Text(
+                '•',
+                style: TextStyle(
+                  color: RouticaTheme.borderStrong,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          items[i],
+        ],
+      ],
+    );
+  }
+
+  Widget _buildStatItem(String value, String label, Color color) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: '$value ',
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          TextSpan(
+            text: label,
+            style: const TextStyle(
+              color: RouticaTheme.onSurfaceVariant,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Goal progress ────────────────────────────────────────────
+
+  Widget _buildGoalProgress(Color habitColor) {
     final progress = _goalProgress;
     final periodName = widget.habit.frequencyPeriod.toString().split('.').last;
 
@@ -591,7 +591,9 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
             Text(
               '${progress.current}/${progress.goal} this $periodName',
               style: TextStyle(
-                color: progress.achieved ? Color(widget.habit.color) : RouticaTheme.onSurfaceVariant,
+                color: progress.achieved
+                    ? habitColor
+                    : RouticaTheme.onSurfaceVariant,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
@@ -599,7 +601,9 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
             Text(
               '${progress.percentage.toInt()}%',
               style: TextStyle(
-                color: progress.achieved ? Color(widget.habit.color) : RouticaTheme.onSurfaceVariant,
+                color: progress.achieved
+                    ? habitColor
+                    : RouticaTheme.onSurfaceVariant,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
@@ -607,21 +611,16 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
           ],
         ),
         const SizedBox(height: 4),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: progress.percentage / 100,
-              minHeight: 8,
-              backgroundColor: RouticaTheme.surfaceVariant,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                progress.achieved
-                  ? Color(widget.habit.color)
-                  : Color(widget.habit.color).withOpacity(0.8),
-              ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(3),
+          child: LinearProgressIndicator(
+            value: progress.percentage / 100,
+            minHeight: 6,
+            backgroundColor: habitColor.withOpacity(0.1),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              progress.achieved
+                  ? habitColor
+                  : habitColor.withOpacity(0.7),
             ),
           ),
         ),
@@ -629,13 +628,14 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard>
     );
   }
 
+  // ── Heatmap ──────────────────────────────────────────────────
+
   Widget _buildHeatmap() {
     return SizedBox(
       width: double.infinity,
       child: PixelHeatmap(
         habit: widget.habit,
         onDayTap: (date, status) {
-          // F20 — Haptic feedback when toggling day status in heatmap.
           HapticFeedback.selectionClick();
           widget.onUpdateDay(date, status);
         },

@@ -75,6 +75,10 @@ dependencies:
   collection: ^1.18.0
   reorderable_grid_view: ^2.2.5
 
+  # Auth & Backend
+  supabase_flutter: ^2.8.0
+  google_sign_in: ^6.2.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

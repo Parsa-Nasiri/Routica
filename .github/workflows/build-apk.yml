@@ -1,8 +1,9 @@
 name: Build APK
 
-# Builds the Android APK and uploads it as a downloadable artifact so it can be
-# installed and tested on a device. Runs automatically on pushes / PRs and can
-# also be triggered manually from the Actions tab (Run workflow).
+# Builds a signed release APK and uploads it as a downloadable artifact.
+# The keystore is committed to the repo for consistent signing across
+# all builds (CI + local), so updates install without uninstalling.
+# versionCode auto-increments via github.run_number.
 on:
   push:
     branches: [main, master, "devin/**"]
@@ -10,17 +11,19 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
-# Cancel superseded runs on the same ref to save CI minutes.
 concurrency:
   group: build-apk-${{ github.ref }}
   cancel-in-progress: true
 
 env:
   FLUTTER_VERSION: "3.35.0"
+  # Google OAuth Web Client ID — passed to Flutter via --dart-define.
+  # Set this as a repository secret in GitHub Settings → Secrets and Variables → Actions.
+  GOOGLE_WEB_CLIENT_ID: ${{ secrets.GOOGLE_WEB_CLIENT_ID }}
 
 jobs:
   build-apk:
-    name: Build release APK
+    name: Build signed release APK
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -49,11 +52,11 @@ jobs:
         run: flutter analyze
         continue-on-error: true
 
-      - name: Build universal release APK
-        run: flutter build apk --release
+      - name: Build universal release APK (auto versionCode)
+        run: flutter build apk --release --build-number=${{ github.run_number }} --dart-define=GOOGLE_WEB_CLIENT_ID=$GOOGLE_WEB_CLIENT_ID
 
-      - name: Build per-ABI release APKs
-        run: flutter build apk --release --split-per-abi
+      - name: Build per-ABI release APKs (auto versionCode)
+        run: flutter build apk --release --split-per-abi --build-number=${{ github.run_number }} --dart-define=GOOGLE_WEB_CLIENT_ID=$GOOGLE_WEB_CLIENT_ID
 
       - name: Upload universal APK
         uses: actions/upload-artifact@v4

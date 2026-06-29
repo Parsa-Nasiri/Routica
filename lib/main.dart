@@ -1,30 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'config/supabase_config.dart';
 import 'models/habit.dart';
-import 'screens/routica_home_screen.dart';
+import 'screens/auth_wrapper.dart';
 import 'services/notification_service.dart';
 import 'theme/routica_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Hive
   await Hive.initFlutter();
-  
+
   // Register Hive adapters
   Hive.registerAdapter(HabitAdapter());
   Hive.registerAdapter(HabitFrequencyPeriodAdapter());
   Hive.registerAdapter(HabitDayStatusAdapter());
   Hive.registerAdapter(HabitHistoryEntryAdapter());
   Hive.registerAdapter(HabitReminderAdapter());
-  
+
+  // Open app settings box (for onboarding/auth state persistence)
+  await Hive.openBox('app_settings');
+
+  // Initialize Supabase
+  await Supabase.initialize(
+    url: SupabaseConfig.url,
+    anonKey: SupabaseConfig.anonKey,
+  );
+
   // Initialize notification service
   final notificationService = NotificationService();
   await notificationService.initialize();
   await notificationService.requestPermissions();
-  
+
   runApp(
     const ProviderScope(
       child: RouticaApp(),
@@ -153,7 +164,7 @@ class RouticaApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const RouticaHomeScreen(),
+      home: const AuthWrapper(),
     );
   }
 }
