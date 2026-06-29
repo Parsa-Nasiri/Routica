@@ -224,10 +224,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        color: RouticaTheme.danger.withOpacity(0.1),
+                        color: RouticaTheme.danger.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: RouticaTheme.danger.withOpacity(0.3),
+                          color: RouticaTheme.danger.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Row(
@@ -303,7 +303,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: RouticaTheme.primary.withOpacity(0.3),
+                color: RouticaTheme.primary.withValues(alpha: 0.3),
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
@@ -455,7 +455,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           borderRadius: BorderRadius.circular(RouticaTheme.radiusButton),
           boxShadow: [
             BoxShadow(
-              color: RouticaTheme.primary.withOpacity(0.3),
+              color: RouticaTheme.primary.withValues(alpha: 0.3),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),

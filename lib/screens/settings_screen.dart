@@ -232,7 +232,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       );
       _showInfoSnackBar(
         'Smart reminders enabled — you\'ll be reminded '
-        'at ${_smartReminderHour}:00 for incomplete habits.',
+        'at $_smartReminderHour:00 for incomplete habits.',
       );
     } else {
       await NotificationService().cancelAllNotifications();
@@ -356,7 +356,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             width: 52,
             height: 52,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(14),
             ),
             child: const Icon(
@@ -392,7 +392,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(RouticaTheme.radiusPill),
             ),
             child: const Text(
@@ -739,7 +739,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       decoration: BoxDecoration(
         color: RouticaTheme.iconBg(RouticaTheme.info),
         borderRadius: BorderRadius.circular(RouticaTheme.radiusCard),
-        border: Border.all(color: RouticaTheme.info.withOpacity(0.2)),
+        border: Border.all(color: RouticaTheme.info.withValues(alpha: 0.2)),
       ),
       padding: const EdgeInsets.all(16),
       child: Row(

@@ -114,7 +114,7 @@ class RouticaApp extends StatelessWidget {
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: RouticaTheme.surfaceVariant.withOpacity(0.5),
+          fillColor: RouticaTheme.surfaceVariant.withValues(alpha: 0.5),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(RouticaTheme.radiusCard),
           ),
@@ -135,10 +135,10 @@ class RouticaApp extends StatelessWidget {
           elevation: 0,
         ),
         navigationBarTheme: NavigationBarThemeData(
-          backgroundColor: RouticaTheme.surface.withOpacity(0.95),
+          backgroundColor: RouticaTheme.surface.withValues(alpha: 0.95),
           elevation: 0,
           height: 64,
-          indicatorColor: RouticaTheme.accent.withOpacity(0.2),
+          indicatorColor: RouticaTheme.accent.withValues(alpha: 0.2),
           labelTextStyle: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
               return const TextStyle(

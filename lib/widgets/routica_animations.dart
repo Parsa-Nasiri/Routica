@@ -256,7 +256,7 @@ class _RingPainter extends CustomPainter {
 
     // Track (background ring)
     final trackPaint = Paint()
-      ..color = Colors.white.withOpacity(0.06)
+      ..color = Colors.white.withValues(alpha: 0.06)
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
@@ -346,7 +346,7 @@ class _AnimatedBarState extends State<AnimatedBar>
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
               colors: [
-                widget.color.withOpacity(0.6),
+                widget.color.withValues(alpha: 0.6),
                 widget.color,
               ],
             ),

@@ -522,7 +522,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           ],
         ),
         borderRadius: BorderRadius.circular(RouticaTheme.radiusCard),
-        border: Border.all(color: RouticaTheme.accent.withOpacity(0.2)),
+        border: Border.all(color: RouticaTheme.accent.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -563,7 +563,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: RouticaTheme.surfaceVariant.withOpacity(0.5),
+        color: RouticaTheme.surfaceVariant.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -700,7 +700,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         borderRadius: BorderRadius.circular(RouticaTheme.radiusCard),
         border: Border.all(
           color: isExpanded
-              ? habitColor.withOpacity(0.4)
+              ? habitColor.withValues(alpha: 0.4)
               : RouticaTheme.border,
         ),
       ),
@@ -730,7 +730,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                             percent: completionPercent,
                             gradient: LinearGradient(
                               colors: [
-                                habitColor.withOpacity(0.7),
+                                habitColor.withValues(alpha: 0.7),
                                 habitColor,
                               ],
                             ),
@@ -875,7 +875,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               child: LinearProgressIndicator(
                 value: goalProgress.percentage / 100,
                 minHeight: 6,
-                backgroundColor: habitColor.withOpacity(0.15),
+                backgroundColor: habitColor.withValues(alpha: 0.15),
                 valueColor: AlwaysStoppedAnimation(habitColor),
               ),
             ),
@@ -926,7 +926,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           Icon(
             Icons.insights_outlined,
             size: 64,
-            color: RouticaTheme.onSurfaceVariant.withOpacity(0.5),
+            color: RouticaTheme.onSurfaceVariant.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           const Text(

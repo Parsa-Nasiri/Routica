@@ -222,7 +222,7 @@ class NotificationService {
     // the notification system deduplicates by ID).
     await _notifications.show(
       milestoneId,
-      '🔥 ${streak}-Day Streak!',
+      '🔥 $streak-Day Streak!',
       'Amazing! You\'ve maintained "${habit.title}" for $streak days straight!',
       NotificationDetails(
         android: AndroidNotificationDetails(
@@ -336,7 +336,7 @@ class NotificationService {
       }
     }
     // Also cancel smart reminder
-    await _notifications.cancel('${habitId}_smart'.hashCode);
+    await _notifications.cancel('$habitId_smart'.hashCode);
   }
 
   Future<void> cancelAllNotifications() async {

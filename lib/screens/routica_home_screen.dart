@@ -209,7 +209,7 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
     return BottomAppBar(
       elevation: 0,
       padding: EdgeInsets.zero,
-      color: RouticaTheme.surface.withOpacity(0.98),
+      color: RouticaTheme.surface.withValues(alpha: 0.98),
       shape: const CircularNotchedRectangle(),
       child: SafeArea(
         top: false,
@@ -253,7 +253,7 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
               color: isSelected
-                  ? RouticaTheme.accent.withOpacity(0.15)
+                  ? RouticaTheme.accent.withValues(alpha: 0.15)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
             ),
@@ -584,9 +584,9 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: RouticaTheme.accent.withOpacity(0.12),
+          color: RouticaTheme.accent.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(RouticaTheme.radiusPill),
-          border: Border.all(color: RouticaTheme.accent.withOpacity(0.3)),
+          border: Border.all(color: RouticaTheme.accent.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -669,7 +669,7 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
           Icon(
             Icons.track_changes_outlined,
             size: 64,
-            color: RouticaTheme.onSurfaceVariant.withOpacity(0.5),
+            color: RouticaTheme.onSurfaceVariant.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           const Text(
@@ -727,7 +727,7 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
           Text(
             'Try a different search term or filter',
             style: TextStyle(
-              color: RouticaTheme.onSurfaceVariant.withOpacity(0.7),
+              color: RouticaTheme.onSurfaceVariant.withValues(alpha: 0.7),
               fontSize: 13,
             ),
           ),

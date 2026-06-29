@@ -68,7 +68,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (context) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -98,7 +98,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -106,7 +106,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
                       Text(
                         'Habit Options',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -161,9 +161,9 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Material(
         color: Colors.transparent,
@@ -178,7 +178,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.2),
+                    color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(icon, color: color, size: 20),
@@ -200,7 +200,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
                       Text(
                         subtitle,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.6),
+                          color: Colors.white.withValues(alpha: 0.6),
                           fontSize: 12,
                         ),
                       ),
@@ -209,7 +209,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
                 ),
                 Icon(
                   Icons.arrow_forward_ios,
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   size: 16,
                 ),
               ],
@@ -258,13 +258,13 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isCompletedToday
-                  ? habitColor.withOpacity(0.4)
+                  ? habitColor.withValues(alpha: 0.4)
                   : RouticaTheme.border,
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: habitColor.withOpacity(isCompletedToday ? 0.15 : 0.08),
+                color: habitColor.withValues(alpha: isCompletedToday ? 0.15 : 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -279,7 +279,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
                     width: 4,
                     color: isCompletedToday
                         ? habitColor
-                        : habitColor.withOpacity(0.15),
+                        : habitColor.withValues(alpha: 0.15),
                   ),
                 ),
               ),
@@ -334,8 +334,8 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
           height: 44,
           decoration: BoxDecoration(
             color: isCompletedToday
-                ? habitColor.withOpacity(0.35)
-                : habitColor.withOpacity(0.15),
+                ? habitColor.withValues(alpha: 0.35)
+                : habitColor.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -429,13 +429,13 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
           color: isCompletedToday
               ? habitColor
               : isMultiCount && todayCount > 0
-                  ? habitColor.withOpacity(0.25)
+                  ? habitColor.withValues(alpha: 0.25)
                   : Colors.transparent,
           border: Border.all(
             color: isCompletedToday
                 ? Colors.transparent
                 : isMultiCount && todayCount > 0
-                    ? habitColor.withOpacity(0.5)
+                    ? habitColor.withValues(alpha: 0.5)
                     : RouticaTheme.borderStrong,
             width: 2,
           ),
@@ -615,11 +615,11 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
           child: LinearProgressIndicator(
             value: progress.percentage / 100,
             minHeight: 6,
-            backgroundColor: habitColor.withOpacity(0.1),
+            backgroundColor: habitColor.withValues(alpha: 0.1),
             valueColor: AlwaysStoppedAnimation<Color>(
               progress.achieved
                   ? habitColor
-                  : habitColor.withOpacity(0.7),
+                  : habitColor.withValues(alpha: 0.7),
             ),
           ),
         ),

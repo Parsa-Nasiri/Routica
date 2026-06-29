@@ -158,7 +158,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             BorderRadius.circular(RouticaTheme.radiusButton),
                         boxShadow: [
                           BoxShadow(
-                            color: RouticaTheme.primary.withOpacity(0.3),
+                            color: RouticaTheme.primary.withValues(alpha: 0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -230,7 +230,7 @@ class _OnboardingPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(48),
               boxShadow: [
                 BoxShadow(
-                  color: gradientColors.first.withOpacity(0.3),
+                  color: gradientColors.first.withValues(alpha: 0.3),
                   blurRadius: 32,
                   spreadRadius: 4,
                   offset: const Offset(0, 8),

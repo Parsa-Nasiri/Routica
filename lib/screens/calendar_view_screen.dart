@@ -241,7 +241,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
             if (icon != null)
               Positioned(
                 bottom: 2,
-                child: Icon(icon, size: 12, color: textColor.withOpacity(0.8)),
+                child: Icon(icon, size: 12, color: textColor.withValues(alpha: 0.8)),
               ),
           ],
         ),
@@ -276,7 +276,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
             borderRadius: BorderRadius.circular(4),
           ),
           child: icon != null
-              ? Icon(icon, size: 10, color: Colors.white.withOpacity(0.8))
+              ? Icon(icon, size: 10, color: Colors.white.withValues(alpha: 0.8))
               : null,
         ),
         const SizedBox(width: 6),

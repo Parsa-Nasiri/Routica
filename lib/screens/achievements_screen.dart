@@ -208,13 +208,13 @@ class _AchievementCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: unlocked
-              ? achievement.color.withOpacity(0.4)
+              ? achievement.color.withValues(alpha: 0.4)
               : RouticaTheme.border,
         ),
         boxShadow: unlocked
             ? [
                 BoxShadow(
-                  color: achievement.color.withOpacity(0.18),
+                  color: achievement.color.withValues(alpha: 0.18),
                   blurRadius: 16,
                   spreadRadius: -2,
                 ),
@@ -234,8 +234,8 @@ class _AchievementCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: unlocked
-                      ? achievement.color.withOpacity(0.18)
-                      : Colors.white.withOpacity(0.1),
+                      ? achievement.color.withValues(alpha: 0.18)
+                      : Colors.white.withValues(alpha: 0.1),
                 ),
                 child: Icon(
                   achievement.icon,

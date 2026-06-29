@@ -1,4 +1,6 @@
-/// Lightweight logging utility that replaces scattered `print()` calls.
+import 'package:flutter/foundation.dart';
+
+/// Lightweight logging utility that replaces scattered `debugPrint()` calls.
 ///
 /// In debug mode messages go to the console; in release they are silenced
 /// to avoid leaking data and wasting cycles.  Callers use [Log.d] for
@@ -13,21 +15,18 @@ class Log {
 
   static void d(String message) {
     if (_kReleaseMode) return;
-    // ignore: avoid_print
-    print('[DEBUG] $message');
+    debugPrint('[DEBUG] $message');
   }
 
   static void w(String message) {
     if (_kReleaseMode) return;
-    // ignore: avoid_print
-    print('[WARN] $message');
+    debugPrint('[WARN] $message');
   }
 
   static void e(String message, [Object? error, StackTrace? stack]) {
     if (_kReleaseMode) return;
-    // ignore: avoid_print
-    print('[ERROR] $message');
-    if (error != null) print('  → $error');
-    if (stack != null) print('  → $stack');
+    debugPrint('[ERROR] $message');
+    if (error != null) debugPrint('  → $error');
+    if (stack != null) debugPrint('  → $stack');
   }
 }

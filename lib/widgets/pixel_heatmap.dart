@@ -93,16 +93,16 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
         backgroundColor = Color(widget.habit.color);
         break;
       case HabitDayStatus.skipped:
-        backgroundColor = RouticaTheme.textDisabled.withOpacity(0.5);
+        backgroundColor = RouticaTheme.textDisabled.withValues(alpha: 0.5);
         break;
       case HabitDayStatus.none:
       case null:
         if (isToday) {
-          backgroundColor = Colors.white.withOpacity(0.15);
+          backgroundColor = Colors.white.withValues(alpha: 0.15);
         } else if (isBeforeCreation || !isPast) {
           backgroundColor = RouticaTheme.border;
         } else {
-          backgroundColor = Color(widget.habit.color).withOpacity(0.2);
+          backgroundColor = Color(widget.habit.color).withValues(alpha: 0.2);
         }
         break;
     }
@@ -119,7 +119,7 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
             borderRadius: BorderRadius.circular(3),
             border: isToday
                 ? Border.all(
-                    color: Color(widget.habit.color).withOpacity(0.6),
+                    color: Color(widget.habit.color).withValues(alpha: 0.6),
                     width: 1.5,
                   )
                 : null,
@@ -136,7 +136,7 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (context) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -148,7 +148,7 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
               border: Border.all(color: RouticaTheme.border),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 16,
                   spreadRadius: 0,
                   offset: const Offset(0, 8),
@@ -167,7 +167,7 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -175,7 +175,7 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
                       Text(
                         _formatDate(day.key),
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
@@ -249,10 +249,10 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(isSelected ? 0.5 : 0.2),
+          color: color.withValues(alpha: isSelected ? 0.5 : 0.2),
           width: isSelected ? 2 : 1,
         ),
       ),
@@ -269,7 +269,7 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.2),
+                    color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(icon, color: color, size: 20),
@@ -291,7 +291,7 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
                       Text(
                         subtitle,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.6),
+                          color: Colors.white.withValues(alpha: 0.6),
                           fontSize: 12,
                         ),
                       ),

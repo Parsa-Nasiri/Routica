@@ -164,15 +164,15 @@ class _AchievementIslandState extends State<AchievementIsland>
           decoration: BoxDecoration(
             color: RouticaTheme.scaffoldBackground,
             borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: achievement.color.withOpacity(0.35)),
+            border: Border.all(color: achievement.color.withValues(alpha: 0.35)),
             boxShadow: [
               BoxShadow(
-                color: achievement.color.withOpacity(0.45),
+                color: achievement.color.withValues(alpha: 0.45),
                 blurRadius: 28,
                 spreadRadius: 1,
               ),
               BoxShadow(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withValues(alpha: 0.4),
                 blurRadius: 16,
                 offset: const Offset(0, 8),
               ),
@@ -191,7 +191,7 @@ class _AchievementIslandState extends State<AchievementIsland>
                     end: Alignment.bottomRight,
                     colors: [
                       achievement.color,
-                      achievement.color.withOpacity(0.65),
+                      achievement.color.withValues(alpha: 0.65),
                     ],
                   ),
                 ),
@@ -289,7 +289,7 @@ class _SplashPainter extends CustomPainter {
       final opacity = (1 - local).clamp(0.0, 1.0);
       final radius = p.size * (1 - 0.4 * local);
 
-      final paint = Paint()..color = p.color.withOpacity(opacity);
+      final paint = Paint()..color = p.color.withValues(alpha: opacity);
       canvas.drawCircle(pos, radius, paint);
     }
   }

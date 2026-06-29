@@ -312,7 +312,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                     width: 56,
                     height: 56,
                     decoration: BoxDecoration(
-                      color: Color(_color).withOpacity(0.15),
+                      color: Color(_color).withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(
@@ -447,8 +447,8 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                                   duration: const Duration(milliseconds: 150),
                                   decoration: BoxDecoration(
                                     color: selected
-                                        ? Color(_color).withOpacity(0.2)
-                                        : Colors.white.withOpacity(0.05),
+                                        ? Color(_color).withValues(alpha: 0.2)
+                                        : Colors.white.withValues(alpha: 0.05),
                                     borderRadius: BorderRadius.circular(12),
                                     border: selected
                                         ? Border.all(
@@ -523,8 +523,8 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                   ),
                   decoration: BoxDecoration(
                     color: selected
-                        ? Color(_color).withOpacity(0.2)
-                        : Colors.white.withOpacity(0.05),
+                        ? Color(_color).withValues(alpha: 0.2)
+                        : Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
                     border: selected
                         ? Border.all(color: Color(_color), width: 2)
@@ -625,7 +625,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                       color: Color(_color),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         width: 2,
                       ),
                     ),
@@ -687,13 +687,13 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                         border: selected
                             ? Border.all(color: Colors.white, width: 3)
                             : Border.all(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                                 width: 1,
                               ),
                         boxShadow: selected
                             ? [
                                 BoxShadow(
-                                  color: Color(colorValue).withOpacity(0.4),
+                                  color: Color(colorValue).withValues(alpha: 0.4),
                                   blurRadius: 12,
                                   spreadRadius: 0,
                                 ),
@@ -747,9 +747,9 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                     flex: 1,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white.withOpacity(0.1)),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                       ),
                       child: TextField(
                         keyboardType: TextInputType.number,
@@ -800,9 +800,9 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                     flex: 1,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white.withOpacity(0.1)),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                       ),
                       child: DropdownButton<HabitFrequencyPeriod>(
                         value: _frequencyPeriod,
@@ -849,10 +849,10 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
-                  color: Color(_color).withOpacity(0.08),
+                  color: Color(_color).withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: Color(_color).withOpacity(0.2),
+                    color: Color(_color).withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -884,7 +884,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                   child: Text(
                     '💡 Tip: Set goal > 1 for habits you do multiple times (e.g. 8 glasses of water/day)',
                     style: TextStyle(
-                      color: RouticaTheme.onSurfaceVariant.withOpacity(0.8),
+                      color: RouticaTheme.onSurfaceVariant.withValues(alpha: 0.8),
                       fontSize: 12,
                     ),
                   ),
@@ -921,7 +921,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                 height: 28,
                 decoration: BoxDecoration(
                   color: _remindersEnabled
-                      ? Color(_color).withOpacity(0.6)
+                      ? Color(_color).withValues(alpha: 0.6)
                       : RouticaTheme.borderStrong,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
@@ -960,7 +960,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _remindersEnabled
-                    ? Color(_color).withOpacity(0.3)
+                    ? Color(_color).withValues(alpha: 0.3)
                     : RouticaTheme.borderStrong,
               ),
             ),
@@ -970,7 +970,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: Color(_color).withOpacity(0.08),
+                      color: Color(_color).withValues(alpha: 0.08),
                       borderRadius:
                           const BorderRadius.vertical(top: Radius.circular(16)),
                     ),
@@ -1045,7 +1045,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                             Icon(
                               Icons.calendar_today,
                               size: 16,
-                              color: Color(_color).withOpacity(0.7),
+                              color: Color(_color).withValues(alpha: 0.7),
                             ),
                             const SizedBox(width: 8),
                             const Text(
@@ -1156,7 +1156,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                 height: 28,
                 decoration: BoxDecoration(
                   color: _archived
-                      ? Color(_color).withOpacity(0.6)
+                      ? Color(_color).withValues(alpha: 0.6)
                       : RouticaTheme.borderStrong,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
@@ -1218,7 +1218,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: Color(_color).withOpacity(0.15),
+                  color: Color(_color).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
@@ -1259,7 +1259,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Color(_color).withOpacity(0.15),
+                        color: Color(_color).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(

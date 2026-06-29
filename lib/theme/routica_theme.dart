@@ -74,7 +74,7 @@ abstract class RouticaTheme {
   );
 
   /// Builds a tinted icon-container background for the given accent.
-  static Color iconBg(Color accent) => accent.withOpacity(0.15);
+  static Color iconBg(Color accent) => accent.withValues(alpha: 0.15);
 
   // ── Habit category accent colours ─────────────────────────────
   // Mapped to the 3-brand palette to keep the app cohesive.
