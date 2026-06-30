@@ -291,51 +291,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget _buildLogo() {
     return Column(
       children: [
-        Container(
-          width: 72,
-          height: 72,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [RouticaTheme.secondary, RouticaTheme.primary],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: RouticaTheme.primary.withValues(alpha: 0.3),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.track_changes_rounded,
-            size: 40,
-            color: Colors.white,
-          ),
-        )
-            .animate()
-            .fadeIn(duration: RouticaTheme.animMedium)
-            .scale(
-              begin: const Offset(0.7, 0.7),
-              end: const Offset(1.0, 1.0),
-              duration: RouticaTheme.animMedium,
-              curve: Curves.easeOutBack,
-            ),
-        const SizedBox(height: 16),
-        const Text(
-          'Routica',
-          style: TextStyle(
-            color: RouticaTheme.textPrimary,
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.5,
-          ),
-        )
-            .animate()
-            .fadeIn(delay: 100.ms, duration: RouticaTheme.animMedium),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         Text(
           _isSignUp ? 'Create your account' : 'Welcome back',
           style: const TextStyle(

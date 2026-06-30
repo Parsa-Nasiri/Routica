@@ -111,19 +111,16 @@ class _PixelHeatmapState extends State<PixelHeatmap> {
       onTap: widget.onDayTap == null
           ? null
           : () => _showDaySheet(day),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Container(
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(3),
-            border: isToday
-                ? Border.all(
-                    color: Color(widget.habit.color).withValues(alpha: 0.6),
-                    width: 1.5,
-                  )
-                : null,
-          ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(3),
+          border: isToday
+              ? Border.all(
+                  color: Color(widget.habit.color).withValues(alpha: 0.6),
+                  width: 1.5,
+                )
+              : null,
         ),
       ),
     );

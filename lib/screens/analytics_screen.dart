@@ -810,13 +810,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 ),
               ),
               // Expandable detail
-              AnimatedCrossFade(
+              AnimatedSize(
                 duration: RouticaTheme.animMedium,
-                crossFadeState: isExpanded
-                    ? CrossFadeState.showSecond
-                    : CrossFadeState.showFirst,
-                firstChild: const SizedBox.shrink(),
-                secondChild: _buildHabitDetail(habit, analytics, goalProgress),
+                curve: Curves.easeInOutCubic,
+                child: isExpanded
+                    ? _buildHabitDetail(habit, analytics, goalProgress)
+                    : const SizedBox.shrink(),
               ),
             ],
           ),

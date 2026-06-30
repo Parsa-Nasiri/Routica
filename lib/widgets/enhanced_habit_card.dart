@@ -254,37 +254,44 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
           duration: const Duration(milliseconds: 250),
           curve: Curves.easeOut,
           decoration: BoxDecoration(
-            color: RouticaTheme.surface,
-            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                RouticaTheme.surface,
+                RouticaTheme.surface.withValues(alpha: 0.95),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(
               color: isCompletedToday
-                  ? habitColor.withValues(alpha: 0.4)
+                  ? habitColor.withValues(alpha: 0.35)
                   : RouticaTheme.border,
-              width: 1,
+              width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: habitColor.withValues(alpha: isCompletedToday ? 0.15 : 0.08),
-                blurRadius: 12,
+                color: habitColor.withValues(alpha: isCompletedToday ? 0.2 : 0.05),
+                blurRadius: isCompletedToday ? 16 : 8,
                 offset: const Offset(0, 4),
               ),
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
             child: Container(
               decoration: BoxDecoration(
                 border: Border(
                   left: BorderSide(
-                    width: 4,
+                    width: 3,
                     color: isCompletedToday
                         ? habitColor
-                        : habitColor.withValues(alpha: 0.15),
+                        : habitColor.withValues(alpha: 0.2),
                   ),
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 14, 14, 14),
+                padding: const EdgeInsets.fromLTRB(14, 16, 16, 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
@@ -330,23 +337,29 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
       children: [
         // Icon tile
         Container(
-          width: 44,
-          height: 44,
+          width: 48,
+          height: 48,
           decoration: BoxDecoration(
             color: isCompletedToday
-                ? habitColor.withValues(alpha: 0.35)
-                : habitColor.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(12),
+                ? habitColor.withValues(alpha: 0.25)
+                : habitColor.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isCompletedToday
+                  ? habitColor.withValues(alpha: 0.4)
+                  : habitColor.withValues(alpha: 0.15),
+              width: 1,
+            ),
           ),
           child: Icon(
             HabitIcons.iconForId(widget.habit.iconId),
             color: isCompletedToday
-                ? Color.lerp(habitColor, Colors.white, 0.2)
-                : habitColor,
-            size: 24,
+                ? habitColor
+                : habitColor.withValues(alpha: 0.85),
+            size: 26,
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 14),
         // Title + category
         Expanded(
           child: Column(
@@ -358,22 +371,25 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: isCompletedToday
-                      ? Colors.white.withValues(alpha: 0.6)
-                      : Colors.white,
-                  fontSize: 16,
-                  fontWeight: isCompletedToday
-                      ? FontWeight.w500
-                      : FontWeight.w600,
+                  color: RouticaTheme.textPrimary,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.2,
+                  decoration: isCompletedToday 
+                      ? TextDecoration.lineThrough 
+                      : TextDecoration.none,
+                  decorationColor: RouticaTheme.onSurfaceVariant.withValues(alpha: 0.6),
+                  decorationThickness: 1.5,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 4),
               Text(
                 widget.habit.category,
                 style: const TextStyle(
                   color: RouticaTheme.onSurfaceVariant,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.3,
                 ),
               ),
             ],
@@ -418,20 +434,20 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
               widget.onToggleToday?.call();
             },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
-        width: 44,
-        height: 44,
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
+          borderRadius: BorderRadius.circular(8),
           color: isCompletedToday
               ? habitColor
               : isMultiCount && todayCount > 0
-                  ? habitColor.withValues(alpha: 0.25)
+                  ? habitColor.withValues(alpha: 0.2)
                   : Colors.transparent,
           border: Border.all(
             color: isCompletedToday
-                ? Colors.transparent
+                ? habitColor
                 : isMultiCount && todayCount > 0
                     ? habitColor.withValues(alpha: 0.5)
                     : RouticaTheme.borderStrong,
@@ -440,7 +456,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
           boxShadow: isCompletedToday
               ? [
                   BoxShadow(
-                    color: habitColor.withValues(alpha: 0.4),
+                    color: habitColor.withValues(alpha: 0.3),
                     blurRadius: 8,
                     spreadRadius: 0,
                   ),
@@ -448,13 +464,13 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
               : null,
         ),
         child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 150),
           child: isMultiCount
               ? (isCompletedToday
-                  ? const Icon(Icons.check,
+                  ? const Icon(Icons.check_rounded,
                       key: ValueKey('check_multi'),
                       color: Colors.white,
-                      size: 22)
+                      size: 20)
                   : Text(
                       '$todayCount/${widget.habit.frequencyGoal}',
                       key: ValueKey('count_$todayCount'),
@@ -462,15 +478,15 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
                         color: todayCount > 0
                             ? Colors.white
                             : RouticaTheme.onSurfaceVariant,
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight: FontWeight.w700,
                       ),
                     ))
               : (isCompletedToday
-                  ? const Icon(Icons.check,
+                  ? const Icon(Icons.check_rounded,
                       key: ValueKey('check_single'),
                       color: Colors.white,
-                      size: 22)
+                      size: 20)
                   : const SizedBox.shrink(key: ValueKey('empty'))),
         ),
       ),
@@ -566,8 +582,9 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
             text: '$value ',
             style: TextStyle(
               color: color,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.2,
             ),
           ),
           TextSpan(
@@ -575,6 +592,7 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
             style: const TextStyle(
               color: RouticaTheme.onSurfaceVariant,
               fontSize: 11,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -601,7 +619,8 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
                     ? habitColor
                     : RouticaTheme.onSurfaceVariant,
                 fontSize: 11,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.2,
               ),
             ),
             Text(
@@ -611,22 +630,30 @@ class _EnhancedHabitCardState extends State<EnhancedHabitCard> {
                     ? habitColor
                     : RouticaTheme.onSurfaceVariant,
                 fontSize: 11,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.2,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 4),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(3),
-          child: LinearProgressIndicator(
-            value: progress.percentage / 100,
-            minHeight: 6,
-            backgroundColor: habitColor.withValues(alpha: 0.1),
-            valueColor: AlwaysStoppedAnimation<Color>(
-              progress.achieved
-                  ? habitColor
-                  : habitColor.withValues(alpha: 0.7),
+        const SizedBox(height: 6),
+        Container(
+          height: 5,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(3),
+            color: habitColor.withValues(alpha: 0.12),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: LinearProgressIndicator(
+              value: progress.percentage / 100,
+              minHeight: 5,
+              backgroundColor: Colors.transparent,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                progress.achieved
+                    ? habitColor
+                    : habitColor.withValues(alpha: 0.7),
+              ),
             ),
           ),
         ),

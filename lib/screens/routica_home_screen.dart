@@ -170,37 +170,7 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
   // ── Header ───────────────────────────────────────────────────
 
   Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8, top: 8, bottom: 16),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              gradient: RouticaTheme.brandGradient,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.track_changes_rounded,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 10),
-          const Text(
-            'Routica',
-            style: TextStyle(
-              color: RouticaTheme.textPrimary,
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-            ),
-          ),
-          const Spacer(),
-        ],
-      ),
-    );
+    return const SizedBox(height: 16);
   }
 
   // ── Navigation bar ───────────────────────────────────────────
@@ -214,14 +184,15 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildNavDestination('habits', Icons.home_outlined,
                   Icons.home_rounded, 'Home'),
               _buildNavDestination('analytics', Icons.query_stats_outlined,
                   Icons.query_stats_rounded, 'Analytics'),
-              const Expanded(child: SizedBox.shrink()),
+              const SizedBox(width: 64), // Space for FAB
               _buildNavDestination('achievements',
                   Icons.emoji_events_outlined, Icons.emoji_events_rounded, 'Awards'),
               _buildNavDestination('settings', Icons.settings_outlined,
@@ -240,17 +211,18 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
     String label,
   ) {
     final isSelected = _currentView == view;
-    return Expanded(
+    return Flexible(
       child: GestureDetector(
         onTap: () {
           HapticFeedback.selectionClick();
           setState(() => _currentView = view);
         },
         behavior: HitTestBehavior.opaque,
-        child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             decoration: BoxDecoration(
               color: isSelected
                   ? RouticaTheme.accent.withValues(alpha: 0.15)
@@ -263,18 +235,18 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
               children: [
                 Icon(
                   isSelected ? selectedIcon : icon,
-                  size: 24,
+                  size: 22,
                   color: isSelected
                       ? RouticaTheme.accent
                       : RouticaTheme.onSurfaceVariant,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3),
                 Text(
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     color: isSelected
                         ? RouticaTheme.accent
@@ -364,25 +336,28 @@ class _RouticaHomeScreenState extends ConsumerState<RouticaHomeScreen> {
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final habit = filtered[index];
-                        return EnhancedHabitCard(
-                          key: ValueKey(habit.id),
-                          habit: habit,
-                          onDelete: () => _deleteHabitWithUndo(habit),
-                          onEdit: () => _openHabitForm(existing: habit),
-                          onUpdateDay: (date, status) =>
-                              _updateDayStatus(habit, date, status),
-                          onToggleToday: () => _toggleTodayStatus(habit),
-                          onLongPress: () => _skipToday(habit),
+                        return RepaintBoundary(
+                          child: EnhancedHabitCard(
+                            key: ValueKey(habit.id),
+                            habit: habit,
+                            onDelete: () => _deleteHabitWithUndo(habit),
+                            onEdit: () => _openHabitForm(existing: habit),
+                            onUpdateDay: (date, status) =>
+                                _updateDayStatus(habit, date, status),
+                            onToggleToday: () => _toggleTodayStatus(habit),
+                            onLongPress: () => _skipToday(habit),
+                          ),
                         );
                       },
                       childCount: filtered.length,
                       addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: false,
                     ),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
-                      mainAxisExtent: 280,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
+                      mainAxisExtent: 270,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
                     ),
                   );
                 },
