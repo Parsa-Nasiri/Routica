@@ -5,15 +5,18 @@
 # Google Sign-In
 -keep class com.google.android.gms.auth.** { *; }
 -keep class com.google.android.gms.auth.api.signin.** { *; }
--keep class com.google.android.gms.common.** { *; }
+-keep class com.google.android.gms.auth.api.accountstate.** { *; }
+-keep class com.google.android.gms.common.api.** { *; }
 -keep class com.google.android.gms.tasks.** { *; }
--keep class com.google.api.client.googleapis.auth.oauth2.** { *; }
--keep class com.google.api.client.googleapis.extensions.android.** { *; }
 
 # Supabase
 -keep class io.supabase.** { *; }
--keep class com.github.jasminb.jsonapi.** { *; }
--keepattributes Signature
--keepattributes *Annotation*
--keepattributes EnclosingMethod
--keepattributes InnerClasses
+-keep class okhttp3.** { *; }
+-keep class okio.** { *; }
+
+# Play Core (referenced by Flutter's deferred component manager but not
+# always present in the classpath — suppress R8 missing-class errors)
+-dontwarn com.google.android.play.core.splitcompat.**
+-dontwarn com.google.android.play.core.splitinstall.**
+-dontwarn com.google.android.play.core.tasks.**
+-dontwarn com.google.android.play.core.**
